@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hora Punta — Dashboard Editorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+/* ─── ROOT ─── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#0A0A0A; --white:#FFFFFF;
+  --cream:#F4EFE6; --accent:#FF4500; --accent2:#FF6A33;
+  --dark1:#141414; --dark2:#1E1E1E;
+  --muted:#888888; --border:rgba(255,255,255,0.08);
+  --f:'Inter',system-ui,sans-serif
+}
+body{font-family:var(--f);background:var(--black);color:var(--white);-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* ─── NAV ─── */
+.dash-nav{
+  position:sticky;top:0;z-index:500;
+  background:rgba(10,10,10,0.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:20px 40px;display:flex;justify-content:space-between;align-items:center
+}
+.dash-logo{font-size:18px;font-weight:900;letter-spacing:-0.06em;text-transform:uppercase}
+.dash-logo span{color:var(--accent)}
+.dash-nav-right{display:flex;align-items:center;gap:20px}
+.dash-info{font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.btn-zip{
+  background:var(--accent);color:#fff;border:none;cursor:pointer;
+  padding:12px 24px;border-radius:6px;font-family:var(--f);
+  font-size:13px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;
+  transition:all 0.2s
+}
+.btn-zip:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,69,0,0.35)}
+.btn-zip:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ─── BODY ─── */
+.dash-body{padding:48px 40px}
+.day-block{margin-bottom:64px}
+.day-header{
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)
+}
+.day-name{font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--white)}
+.day-sep{flex:1;height:1px;background:var(--border)}
+.day-count{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+.pieces-row{display:flex;flex-wrap:wrap;gap:20px}
+
+/* ─── CARD ─── */
+.piece-card{
+  background:var(--dark1);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;
+  transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;
+  display:flex;flex-direction:column
+}
+.piece-card:hover{border-color:rgba(255,69,0,0.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+.card-top{
+  padding:11px 14px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;gap:8px
+}
+.card-label{font-size:11px;font-weight:600;color:var(--white);letter-spacing:0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-tag{
+  font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--accent);background:rgba(255,69,0,0.12);
+  border-radius:100px;padding:2px 8px;flex-shrink:0
+}
+.card-preview{position:relative;overflow:hidden;cursor:default}
+.card-hover{
+  position:absolute;inset:0;opacity:0;transition:opacity 0.2s;
+  background:rgba(10,10,10,0.06);display:flex;align-items:center;justify-content:center;
+  pointer-events:none
+}
+.card-preview:hover .card-hover{opacity:1}
+.card-hover span{
+  background:var(--black);color:var(--white);
+  font-size:9px;font-weight:700;padding:5px 12px;
+  border-radius:100px;letter-spacing:0.1em;text-transform:uppercase;
+  border:1px solid var(--border)
+}
+.card-bottom{
+  padding:10px 14px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;align-items:center;gap:8px
+}
+.btn-dl{
+  background:var(--dark2);color:var(--white);border:1px solid var(--border);
+  cursor:pointer;padding:7px 16px;border-radius:5px;font-family:var(--f);
+  font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  transition:all 0.2s
+}
+.btn-dl:hover{background:var(--accent);border-color:var(--accent)}
+.btn-dl:disabled{opacity:0.4;cursor:not-allowed}
+
+/* ─── ARTWORK BASE ─── */
+.artwork{position:relative;overflow:hidden;font-family:var(--f);flex-shrink:0}
+.artwork.post{width:270px;height:270px}
+.artwork.story{width:270px;height:480px}
+.artwork.dark{background:var(--black)}
+.artwork.dark1{background:var(--dark1)}
+.artwork.dark2{background:var(--dark2)}
+.artwork.cream{background:var(--cream)}
+.artwork.capturing [contenteditable]{outline:none!important;box-shadow:none!important}
+
+/* ─── EDITABLE ─── */
+[contenteditable="true"]{outline:none;transition:outline 0.15s;border-radius:2px;display:block}
+[contenteditable="true"]:hover{outline:1px dashed rgba(255,69,0,0.5);outline-offset:2px;cursor:text}
+[contenteditable="true"]:focus{outline:1.5px solid var(--accent);outline-offset:2px}
+
+/* ─── SHARED PIECE ATOMS ─── */
+.a-logo{position:absolute;top:14px;left:16px;font-size:8px;font-weight:900;letter-spacing:-0.04em;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+.a-logo span{color:var(--accent)}
+.a-logo.dk{color:rgba(10,10,10,0.35)}
+.a-logo.dk span{color:var(--accent)}
+.a-slide{position:absolute;top:14px;right:16px;font-size:8px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.3)}
+.a-slide.dk{color:rgba(10,10,10,0.35)}
+.a-sig{position:absolute;bottom:13px;left:16px;font-size:7px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.a-sig.dk{color:rgba(10,10,10,0.3)}
+.a-sig.r{left:auto;right:16px}
+.a-accent-bar{position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent)}
+.a-accent-bar.b{top:auto;bottom:0}
+.a-orange-line{width:28px;height:2px;background:var(--accent);margin-bottom:10px}
+.a-tag{font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:block}
+.a-divider{height:1px;background:var(--border);margin:10px 0}
+.a-divider.dk{background:rgba(10,10,10,0.12)}
+
+/* photo overlay */
+.photo-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.photo-overlay{position:absolute;inset:0}
+.photo-overlay.b2t{background:linear-gradient(to top,rgba(10,10,10,0.92) 0%,rgba(10,10,10,0.55) 55%,rgba(10,10,10,0.3) 100%)}
+.photo-overlay.full{background:rgba(10,10,10,0.65)}
+.photo-overlay.heavy{background:rgba(10,10,10,0.78)}
+
+/* ─── POST LAYOUTS ─── */
+
+/* P1 — Hero dark */
+.ly-hero{position:absolute;bottom:32px;left:16px;right:16px}
+.ly-hero .eyebrow{font-size:8px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:block}
+.ly-hero .hl{font-size:32px;font-weight:900;line-height:0.96;letter-spacing:-0.04em;color:var(--white);margin-bottom:9px}
+.ly-hero .sub{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.04em}
+
+/* P2,3,4 — Numbered */
+.ly-num{position:absolute;top:44px;bottom:30px;left:16px;right:16px;display:flex;flex-direction:column;justify-content:space-between}
+.ly-num .num{font-size:72px;font-weight:900;letter-spacing:-0.06em;line-height:1;color:rgba(255,255,255,0.04);position:absolute;bottom:28px;right:12px;font-variant-numeric:tabular-nums}
+.ly-num .hl{font-size:22px;font-weight:800;line-height:1.08;letter-spacing:-0.03em;color:var(--white);position:relative;z-index:1}
+.ly-num .body{font-size:10.5px;font-weight:400;color:var(--muted);line-height:1.65;position:relative;z-index:1}
+
+/* P5 — Resolution cream */
+.ly-res{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 18px}
+.ly-res .pre-line{font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.ly-res .hl-light{font-size:24px;font-weight:700;line-height:1.0;letter-spacing:-0.03em;color:rgba(10,10,10,0.45);margin-bottom:4px}
+.ly-res .hl-bold{font-size:32px;font-weight:900;line-height:0.95;letter-spacing:-0.04em;color:var(--black);margin-bottom:18px}
+.ly-res .hl-bold span{color:var(--accent)}
+.ly-res .brand{font-size:8.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--black)}
+
+/* P6 — Statement */
+.ly-stmt{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 16px}
+.ly-stmt .xl{font-size:36px;font-weight:900;line-height:0.95;letter-spacing:-0.05em;color:var(--white);margin-bottom:14px}
+.ly-stmt .xl span{color:var(--accent)}
+.ly-stmt .cta-hint{font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+
+/* P7 — Cinematic photo */
+.ly-cine{position:absolute;bottom:30px;left:16px;right:16px;z-index:2}
+.ly-cine .eyebrow{font-size:8px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:block}
+.ly-cine .big{font-size:44px;font-weight:900;line-height:0.9;letter-spacing:-0.05em;color:var(--white);margin-bottom:8px}
+.ly-cine .sub{font-size:10.5px;font-weight:500;color:rgba(255,255,255,0.55);letter-spacing:0.03em}
+
+/* P8 — Quote dark */
+.ly-qt{position:absolute;top:50%;left:16px;right:16px;transform:translateY(-50%)}
+.ly-qt .pre{font-size:8px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block}
+.ly-qt .qt{font-size:17px;font-weight:700;line-height:1.25;letter-spacing:-0.02em;color:var(--white);padding-left:12px;border-left:2.5px solid var(--accent);margin-bottom:12px}
+.ly-qt .body{font-size:10px;font-weight:400;color:var(--muted);line-height:1.6}
+
+/* P9 — Stats */
+.ly-stats{position:absolute;top:50%;left:16px;right:16px;transform:translateY(-50%)}
+.ly-stats .stat-row{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.ly-stats .stat-num{font-size:36px;font-weight:900;letter-spacing:-0.05em;color:var(--accent)}
+.ly-stats .stat-label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.04em}
+.ly-stats .concl{font-size:10px;font-weight:400;color:rgba(255,255,255,0.35);line-height:1.6;margin-top:10px}
+
+/* P10 — CTA cream */
+.ly-ctacream{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 18px}
+.ly-ctacream .eyebrow{font-size:8px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:block}
+.ly-ctacream .main{font-size:28px;font-weight:900;line-height:0.96;letter-spacing:-0.04em;color:var(--black);margin-bottom:16px}
+.ly-ctacream .link{font-size:9.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent)}
+
+/* P11 — Photo editorial */
+.ly-photo-ed{position:absolute;bottom:30px;left:16px;right:16px;z-index:2}
+.ly-photo-ed .fade{font-size:20px;font-weight:700;line-height:1.05;letter-spacing:-0.03em;color:rgba(255,255,255,0.4);margin-bottom:4px}
+.ly-photo-ed .bold{font-size:24px;font-weight:900;line-height:1.0;letter-spacing:-0.04em;color:var(--white)}
+.ly-photo-ed .bold span{color:var(--accent)}
+
+/* P12 — CTA dark bold */
+.ly-ctadark{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 16px}
+.ly-ctadark .big-num{font-size:72px;font-weight:900;letter-spacing:-0.06em;color:var(--accent);line-height:1;margin-bottom:6px}
+.ly-ctadark .hl{font-size:24px;font-weight:900;line-height:1.0;letter-spacing:-0.04em;color:var(--white);margin-bottom:12px}
+.ly-ctadark .sub{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:0.04em}
+
+/* ─── STORY LAYOUTS ─── */
+
+/* S13 — Poll photo */
+.ly-spoll{position:absolute;bottom:44px;left:20px;right:20px;z-index:2}
+.ly-spoll .q{font-size:26px;font-weight:900;line-height:1.05;letter-spacing:-0.04em;color:var(--white);margin-bottom:20px}
+.poll-opts{display:flex;flex-direction:column;gap:9px}
+.poll-opt{
+  border:1.5px solid rgba(255,255,255,0.25);border-radius:8px;
+  padding:11px 14px;font-size:12px;font-weight:700;
+  color:rgba(255,255,255,0.85);letter-spacing:0.02em;text-align:center
+}
+.poll-opt.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* S14 — Text photo */
+.ly-stxt{position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%);z-index:2}
+.ly-stxt .kicker{font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:block}
+.ly-stxt .hl{font-size:28px;font-weight:900;line-height:1.04;letter-spacing:-0.04em;color:var(--white);margin-bottom:12px}
+.ly-stxt .body{font-size:13px;font-weight:400;color:rgba(255,255,255,0.58);line-height:1.6}
+
+/* S15 — Steps */
+.ly-ssteps{position:absolute;top:60px;bottom:50px;left:20px;right:20px}
+.ly-ssteps .title{font-size:24px;font-weight:900;line-height:1.05;letter-spacing:-0.04em;color:var(--white);margin-bottom:24px}
+.step-list{display:flex;flex-direction:column;gap:14px}
+.step-it{display:flex;gap:14px;align-items:flex-start}
+.step-n{font-size:9px;font-weight:700;letter-spacing:0.1em;color:var(--accent);min-width:18px;padding-top:2px}
+.step-body{}
+.step-hl{font-size:13px;font-weight:700;color:var(--white);line-height:1.2;margin-bottom:2px}
+.step-sub{font-size:10px;font-weight:400;color:var(--muted);line-height:1.4}
+
+/* S16 — Question cream */
+.ly-sq{position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%)}
+.ly-sq .kicker{font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:block}
+.ly-sq .q{font-size:26px;font-weight:900;line-height:1.05;letter-spacing:-0.04em;color:var(--black);margin-bottom:22px}
+.open-box{
+  border:1.5px solid rgba(10,10,10,0.12);border-radius:8px;
+  padding:13px 14px;font-size:12px;color:rgba(10,10,10,0.28);
+  font-style:italic;font-weight:400
+}
+
+/* S17 — CTA dark */
+.ly-scta{position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%)}
+.ly-scta .urgency{font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;display:block}
+.ly-scta .msg{font-size:30px;font-weight:900;line-height:1.0;letter-spacing:-0.04em;color:var(--white);margin-bottom:8px}
+.ly-scta .sub{font-size:12px;font-weight:400;color:var(--muted);line-height:1.55;margin-bottom:26px}
+.cta-pill{
+  display:block;background:var(--accent);color:#fff;text-align:center;
+  padding:14px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase
+}
+
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:32px;right:32px;z-index:999;
+  background:var(--dark2);color:var(--white);border:1px solid var(--border);
+  border-radius:8px;padding:14px 22px;font-size:13px;font-weight:600;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  transform:translateY(12px);opacity:0;pointer-events:none;transition:all 0.3s
+}
+.toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<nav class="dash-nav">
+  <div class="dash-logo">Hora<span>Punta</span></div>
+  <div class="dash-nav-right">
+    <span class="dash-info">17 peces · Setmana editorial</span>
+    <button class="btn-zip" id="btnZip" onclick="downloadAll()">Descarregar ZIP</button>
+  </div>
+</nav>
+
+<div class="dash-body" id="dashBody"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const IMG = {
+  beer:  'imatges/yasin-aribuga-daMT4OR3Eac-unsplash.jpg',
+  bar:   'imatges/the-free-birds-c19EYwrW-EU-unsplash.jpg',
+  booth: 'imatges/carson-masterson-yuxr5ohFB-g-unsplash.jpg'
+};
+
+/* ─── 17 PIECES ─── */
+const DAYS = [
+  { label: 'Dilluns', pieces: [
+
+    { id:'p01', label:'Carrusel principal — 1/5', tag:'Post',
+      html:`<div class="artwork post dark">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">01/05</div>
+        <div class="ly-hero">
+          <span class="eyebrow" contenteditable="true">El problema real</span>
+          <div class="hl" contenteditable="true">Cinc coses<br>que et frenen.</div>
+          <div class="sub" contenteditable="true">I ningú et diu.</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p02', label:'Carrusel principal — 2/5', tag:'Post',
+      html:`<div class="artwork post dark1">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">02/05</div>
+        <div class="ly-num">
+          <div>
+            <span class="a-tag" contenteditable="true">01</span>
+            <div class="hl" contenteditable="true">Publiques cada dia<br>i esperes que arribin.</div>
+          </div>
+          <div>
+            <div class="a-divider"></div>
+            <div class="body" contenteditable="true">Les xarxes no porten gent.<br>Porten audiència.<br>Són coses molt diferents.</div>
+          </div>
+          <div class="num">01</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p03', label:'Carrusel principal — 3/5', tag:'Post',
+      html:`<div class="artwork post dark2">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">03/05</div>
+        <div class="ly-num">
+          <div>
+            <span class="a-tag" contenteditable="true">02</span>
+            <div class="hl" contenteditable="true">Pagues per contingut.<br>No per clients.</div>
+          </div>
+          <div>
+            <div class="a-divider"></div>
+            <div class="body" contenteditable="true">Els likes no es cobren.<br>Les taules plenes, sí.</div>
+          </div>
+          <div class="num">02</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p04', label:'Carrusel principal — 4/5', tag:'Post',
+      html:`<div class="artwork post dark1">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">04/05</div>
+        <div class="ly-num">
+          <div>
+            <span class="a-tag" contenteditable="true">03</span>
+            <div class="hl" contenteditable="true">El teu local no té cap raó<br>per existir fora del feed.</div>
+          </div>
+          <div>
+            <div class="a-divider"></div>
+            <div class="body" contenteditable="true">Si no passa res allà dins,<br>no passarà res al teu negoci.</div>
+          </div>
+          <div class="num">03</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p05', label:'Carrusel principal — 5/5', tag:'Post',
+      html:`<div class="artwork post cream">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo dk">Hora<span>Punta</span></div>
+        <div class="a-slide dk">05/05</div>
+        <div class="ly-res">
+          <span class="pre-line" contenteditable="true">La solució</span>
+          <div class="hl-light" contenteditable="true">La solució no és<br>més contingut.</div>
+          <div class="hl-bold"><span contenteditable="true">És més acció.</span></div>
+          <div class="a-divider dk"></div>
+          <div class="brand" contenteditable="true">Hora Punta — Activem negocis.</div>
+        </div>
+        <div class="a-sig dk">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p13', label:'Story — Poll', tag:'Story',
+      html:`<div class="artwork story dark">
+        <div class="photo-bg" style="background-image:url('${IMG.beer}');background-position:center 30%"></div>
+        <div class="photo-overlay heavy"></div>
+        <div class="a-accent-bar"></div>
+        <div class="a-logo" style="z-index:3">Hora<span>Punta</span></div>
+        <div class="ly-spoll">
+          <div class="q" contenteditable="true">El teu local és conegut<br>de veritat al barri?</div>
+          <div class="poll-opts">
+            <div class="poll-opt active" contenteditable="true">Sí, tothom ens coneix</div>
+            <div class="poll-opt" contenteditable="true">Hauria de ser-ho</div>
+          </div>
+        </div>
+        <div class="a-sig" style="z-index:3">@horapunta</div>
+      </div>`
+    }
+
+  ]},
+
+  { label: 'Dimarts', pieces: [
+
+    { id:'p06', label:'Post individual', tag:'Post',
+      html:`<div class="artwork post dark">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="ly-stmt">
+          <div class="xl" contenteditable="true">Tu vols clients.<br><span>No likes.</span></div>
+          <div class="cta-hint" contenteditable="true">Segueix si estàs d'acord</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p14', label:'Story — Opinió', tag:'Story',
+      html:`<div class="artwork story dark">
+        <div class="photo-bg" style="background-image:url('${IMG.bar}');background-position:center"></div>
+        <div class="photo-overlay full"></div>
+        <div class="a-accent-bar"></div>
+        <div class="a-logo" style="z-index:3">Hora<span>Punta</span></div>
+        <div class="ly-stxt">
+          <span class="kicker" contenteditable="true">Punt de vista</span>
+          <div class="hl" contenteditable="true">El problema<br>no és Instagram.</div>
+          <div class="body" contenteditable="true">És que creus que Instagram<br>és suficient per omplir el teu local.</div>
+        </div>
+        <div class="a-sig" style="z-index:3">@horapunta</div>
+      </div>`
+    }
+
+  ]},
+
+  { label: 'Dimecres', pieces: [
+
+    { id:'p07', label:'Carrusel secundari — 1/4', tag:'Post',
+      html:`<div class="artwork post dark">
+        <div class="photo-bg" style="background-image:url('${IMG.booth}');background-position:center"></div>
+        <div class="photo-overlay b2t"></div>
+        <div class="a-logo" style="z-index:3">Hora<span>Punta</span></div>
+        <div class="a-slide" style="z-index:3">01/04</div>
+        <div class="ly-cine" style="z-index:3">
+          <span class="eyebrow" contenteditable="true">Cas real</span>
+          <div class="big" contenteditable="true">47<br>runners.</div>
+          <div class="sub" contenteditable="true">Un dimarts. Les 8h del matí.</div>
+        </div>
+        <div class="a-sig" style="z-index:3">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p08', label:'Carrusel secundari — 2/4', tag:'Post',
+      html:`<div class="artwork post dark1">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">02/04</div>
+        <div class="ly-qt">
+          <span class="pre" contenteditable="true">El que va passar</span>
+          <div class="qt" contenteditable="true">Vam trucar al club de running del barri. El final de la ruta és aquí.</div>
+          <div class="body" contenteditable="true">Primera consumició inclosa.<br>Sense cap anunci. Sense cap story.</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p09', label:'Carrusel secundari — 3/4', tag:'Post',
+      html:`<div class="artwork post dark2">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">03/04</div>
+        <div class="ly-stats">
+          <div class="stat-row">
+            <span class="stat-num" contenteditable="true">23</span>
+            <span class="stat-label" contenteditable="true">persones — Setmana 1</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-num" contenteditable="true">47</span>
+            <span class="stat-label" contenteditable="true">persones — Setmana 4</span>
+          </div>
+          <div class="a-divider"></div>
+          <div class="concl" contenteditable="true">Cap anunci. Cap influencer.<br>Cap algoritme.</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p10', label:'Carrusel secundari — 4/4', tag:'Post',
+      html:`<div class="artwork post cream">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo dk">Hora<span>Punta</span></div>
+        <div class="a-slide dk">04/04</div>
+        <div class="ly-ctacream">
+          <span class="eyebrow" contenteditable="true">Màrqueting físic</span>
+          <div class="main" contenteditable="true">Això és<br>el que fem.</div>
+          <div class="link" contenteditable="true">Vols el mateix? Link a la bio →</div>
+        </div>
+        <div class="a-sig dk">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p15', label:'Story — Procés', tag:'Story',
+      html:`<div class="artwork story dark1">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="ly-ssteps">
+          <div class="title" contenteditable="true">Com portem<br>gent al teu local.</div>
+          <div class="step-list">
+            <div class="step-it">
+              <div class="step-n">01</div>
+              <div class="step-body">
+                <div class="step-hl" contenteditable="true">Identifiquem els clubs del barri</div>
+                <div class="step-sub" contenteditable="true">Run clubs, gimnasos, col·lectius actius</div>
+              </div>
+            </div>
+            <div class="step-it">
+              <div class="step-n">02</div>
+              <div class="step-body">
+                <div class="step-hl" contenteditable="true">Proposem el local com a punt de trobada</div>
+                <div class="step-sub" contenteditable="true">Primera consumició inclosa — acord clar</div>
+              </div>
+            </div>
+            <div class="step-it">
+              <div class="step-n">03</div>
+              <div class="step-body">
+                <div class="step-hl" contenteditable="true">Activació recurrent setmanal</div>
+                <div class="step-sub" contenteditable="true">Sense ads. Sense algoritme.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    }
+
+  ]},
+
+  { label: 'Dijous', pieces: [
+
+    { id:'p11', label:'Post individual', tag:'Post',
+      html:`<div class="artwork post dark">
+        <div class="photo-bg" style="background-image:url('${IMG.bar}');background-position:center 60%"></div>
+        <div class="photo-overlay heavy"></div>
+        <div class="a-accent-bar"></div>
+        <div class="a-logo" style="z-index:3">Hora<span>Punta</span></div>
+        <div class="ly-photo-ed" style="z-index:3">
+          <div class="fade" contenteditable="true">Una agència et fa un pla.</div>
+          <div class="bold" contenteditable="true">Nosaltres<br><span>l'executem.</span></div>
+        </div>
+        <div class="a-sig" style="z-index:3">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p16', label:'Story — Pregunta', tag:'Story',
+      html:`<div class="artwork story cream">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo dk">Hora<span>Punta</span></div>
+        <div class="ly-sq">
+          <span class="kicker" contenteditable="true">Pregunta oberta</span>
+          <div class="q" contenteditable="true">Quin és el principal obstacle del teu local ara mateix?</div>
+          <div class="open-box" contenteditable="true">Escriu aquí la teva resposta...</div>
+        </div>
+        <div class="a-sig dk">@horapunta</div>
+      </div>`
+    }
+
+  ]},
+
+  { label: 'Divendres', pieces: [
+
+    { id:'p12', label:'Post individual — CTA', tag:'Post',
+      html:`<div class="artwork post dark">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="ly-ctadark">
+          <div class="big-num" contenteditable="true">20'</div>
+          <div class="hl" contenteditable="true">Sense PowerPoints.<br>Sense compromís.</div>
+          <div class="sub" contenteditable="true">Diagnosi gratuïta — link a la bio.</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p17', label:'Story — CTA final', tag:'Story',
+      html:`<div class="artwork story dark">
+        <div class="photo-bg" style="background-image:url('${IMG.booth}');background-position:center;opacity:0.35"></div>
+        <div class="a-accent-bar"></div>
+        <div class="a-logo" style="z-index:3">Hora<span>Punta</span></div>
+        <div class="ly-scta" style="z-index:3">
+          <span class="urgency" contenteditable="true">Aquesta setmana</span>
+          <div class="msg" contenteditable="true">Tenim 2 places<br>de diagnosi.</div>
+          <div class="sub" contenteditable="true">La setmana vinent, no ho sabem.</div>
+          <div class="cta-pill" contenteditable="true">Link a la bio →</div>
+        </div>
+        <div class="a-sig" style="z-index:3">@horapunta</div>
+      </div>`
+    }
+
+  ]}
+];
+
+/* ─── RENDER ─── */
+const body = document.getElementById('dashBody');
+DAYS.forEach(day => {
+  const block = document.createElement('div');
+  block.className = 'day-block';
+  block.innerHTML = `<div class="day-header">
+    <span class="day-name">${day.label}</span>
+    <div class="day-sep"></div>
+    <span class="day-count">${day.pieces.length} peces</span>
+  </div>`;
+  const row = document.createElement('div');
+  row.className = 'pieces-row';
+  day.pieces.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'piece-card';
+    card.dataset.id = p.id;
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="card-label">${p.label}</span>
+        <span class="card-tag">${p.tag}</span>
+      </div>
+      <div class="card-preview" id="prev-${p.id}">
+        ${p.html}
+        <div class="card-hover"><span>Edita el text</span></div>
+      </div>
+      <div class="card-bottom">
+        <button class="btn-dl" id="dl-${p.id}" onclick="downloadPiece('${p.id}')">PNG</button>
+      </div>`;
+    row.appendChild(card);
+  });
+  block.appendChild(row);
+  body.appendChild(block);
+});
+
+/* ─── EXPORT ─── */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+async function downloadPiece(id){
+  const artwork = document.querySelector(`#prev-${id} .artwork`);
+  const btn = document.getElementById(`dl-${id}`);
+  btn.textContent='...'; btn.disabled=true;
+  artwork.classList.add('capturing');
+  try{
+    const canvas = await html2canvas(artwork,{
+      scale:4, useCORS:true, allowTaint:true,
+      backgroundColor:null, logging:false,
+      width:artwork.offsetWidth, height:artwork.offsetHeight
+    });
+    artwork.classList.remove('capturing');
+    canvas.toBlob(blob=>{
+      saveAs(blob,`horapunta-${id}.png`);
+      showToast(`${id}.png descarregat`);
+    });
+  }catch(e){
+    artwork.classList.remove('capturing');
+    showToast('Error en la descàrrega');
+  }
+  btn.textContent='PNG'; btn.disabled=false;
+}
+
+async function downloadAll(){
+  const btn=document.getElementById('btnZip');
+  btn.textContent='Generant...'; btn.disabled=true;
+  showToast('Preparant totes les peces...');
+  const zip=new JSZip();
+  const artworks=document.querySelectorAll('.artwork');
+  let i=0;
+  for(const artwork of artworks){
+    const card=artwork.closest('.piece-card');
+    const id=card.dataset.id;
+    artwork.classList.add('capturing');
+    try{
+      const canvas=await html2canvas(artwork,{
+        scale:4,useCORS:true,allowTaint:true,
+        backgroundColor:null,logging:false,
+        width:artwork.offsetWidth,height:artwork.offsetHeight
+      });
+      artwork.classList.remove('capturing');
+      const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));
+      zip.file(`${String(++i).padStart(2,'0')}-${id}.png`,blob);
+      showToast(`Processant ${i}/${artworks.length}...`);
+    }catch(e){artwork.classList.remove('capturing')}
+  }
+  const zipBlob=await zip.generateAsync({type:'blob'});
+  saveAs(zipBlob,'horapunta-contingut-setmanal.zip');
+  showToast('ZIP descarregat.');
+  btn.textContent='Descarregar ZIP'; btn.disabled=false;
+}
+</script>
+</body>
+</html>
