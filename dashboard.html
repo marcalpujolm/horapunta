@@ -6,255 +6,323 @@
 <title>Hora Punta — Dashboard Editorial</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 <style>
-/* ── ROOT ── */
+/* ─── ROOT ─── */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --cream:#f4f1ea; --black:#0d0d0d; --red:#c9222a;
-  --gris:#6b6560; --border:rgba(13,13,13,0.08);
-  --dash:#eceae4; --card:#ffffff;
-  --fs:'Fraunces',serif; --fi:'Inter',sans-serif; --fm:'JetBrains Mono',monospace
+  --black:#0A0A0A; --white:#FFFFFF;
+  --cream:#F4EFE6; --accent:#FF4500; --accent2:#FF6A33;
+  --dark1:#141414; --dark2:#1E1E1E;
+  --muted:#888888; --border:rgba(255,255,255,0.08);
+  --f:'Inter',system-ui,sans-serif
 }
-body{font-family:var(--fi);background:var(--dash);color:var(--black);-webkit-font-smoothing:antialiased;min-height:100vh}
+body{font-family:var(--f);background:var(--black);color:var(--white);-webkit-font-smoothing:antialiased;min-height:100vh}
 
-/* ── HEADER ── */
-.dash-header{
-  position:sticky;top:0;z-index:500;background:var(--card);
-  border-bottom:1px solid var(--border);padding:18px 40px;
-  display:flex;justify-content:space-between;align-items:center
+/* ─── NAV ─── */
+.dash-nav{
+  position:sticky;top:0;z-index:500;
+  background:rgba(10,10,10,0.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:18px 40px;display:flex;justify-content:space-between;align-items:center
 }
-.dash-logo{font-family:var(--fs);font-size:17px;font-weight:400;letter-spacing:-0.02em;color:var(--black)}
-.dash-logo span{color:var(--red)}
-.dash-tabs{display:flex;gap:2px;background:var(--dash);border-radius:8px;padding:4px}
+.dash-logo{font-size:18px;font-weight:900;letter-spacing:-0.06em;text-transform:uppercase}
+.dash-logo span{color:var(--accent)}
+.dash-nav-right{display:flex;align-items:center;gap:20px}
+.dash-tabs{display:flex;gap:2px;background:rgba(255,255,255,0.06);border-radius:8px;padding:4px}
 .tab-btn{
   background:none;border:none;cursor:pointer;padding:7px 18px;border-radius:6px;
-  font-family:var(--fi);font-size:12px;font-weight:600;letter-spacing:0.04em;
-  text-transform:uppercase;color:var(--gris);transition:all 0.2s
+  font-family:var(--f);font-size:11px;font-weight:700;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--muted);transition:all 0.2s
 }
-.tab-btn.active{background:var(--card);color:var(--black);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+.tab-btn.active{background:var(--dark2);color:var(--white)}
 .dash-zips{display:flex;gap:10px;align-items:center}
 .btn-zip{
-  background:var(--black);color:#fff;border:none;cursor:pointer;
-  padding:9px 18px;border-radius:5px;font-family:var(--fi);
-  font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;
+  background:var(--accent);color:#fff;border:none;cursor:pointer;
+  padding:10px 20px;border-radius:6px;font-family:var(--f);
+  font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;
   transition:all 0.2s
 }
-.btn-zip:hover{background:var(--red)}
-.btn-zip:disabled{opacity:0.45;cursor:not-allowed}
-.btn-zip.secondary{background:var(--dash);color:var(--black);border:1px solid var(--border)}
-.btn-zip.secondary:hover{background:var(--black);color:#fff;border-color:var(--black)}
+.btn-zip:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,69,0,0.35)}
+.btn-zip:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
 
-/* ── BODY ── */
-.dash-section{display:none;padding:40px}
+/* ─── SECTIONS ─── */
+.dash-section{display:none;padding:48px 40px}
 .dash-section.visible{display:block}
-.day-block{margin-bottom:56px}
+.day-block{margin-bottom:64px}
 .day-header{
-  display:flex;align-items:center;gap:14px;margin-bottom:20px;
-  padding-bottom:14px;border-bottom:1px solid var(--border)
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)
 }
-.day-name{font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--gris)}
+.day-name{font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--white)}
 .day-sep{flex:1;height:1px;background:var(--border)}
-.day-count{font-family:var(--fm);font-size:9px;color:rgba(13,13,13,0.3);letter-spacing:0.08em}
-.pieces-row{display:flex;flex-wrap:wrap;gap:16px}
+.day-count{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+.pieces-row{display:flex;flex-wrap:wrap;gap:20px}
+.section-title{font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--white);margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
 
-/* ── SECTION TITLE ── */
-.section-title{
-  font-family:var(--fm);font-size:10px;font-weight:500;letter-spacing:0.16em;
-  text-transform:uppercase;color:var(--gris);margin-bottom:24px;
-  padding-bottom:14px;border-bottom:1px solid var(--border)
-}
-
-/* ── CARD ── */
+/* ─── CARD ─── */
 .piece-card{
-  background:var(--card);border:1px solid var(--border);border-radius:10px;
-  overflow:hidden;transition:border-color 0.2s,box-shadow 0.2s,transform 0.2s;
+  background:var(--dark1);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;
+  transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;
   display:flex;flex-direction:column
 }
-.piece-card:hover{border-color:rgba(13,13,13,0.16);box-shadow:0 4px 20px rgba(0,0,0,0.07);transform:translateY(-1px)}
+.piece-card:hover{border-color:rgba(255,69,0,0.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
 .card-top{
-  padding:9px 12px;border-bottom:1px solid var(--border);
+  padding:11px 14px;border-bottom:1px solid var(--border);
   display:flex;justify-content:space-between;align-items:center;gap:8px
 }
-.card-label{font-family:var(--fm);font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gris);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-tag{font-family:var(--fm);font-size:9px;color:var(--red);letter-spacing:0.06em;flex-shrink:0}
+.card-label{font-size:11px;font-weight:600;color:var(--white);letter-spacing:0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-tag{
+  font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--accent);background:rgba(255,69,0,0.12);
+  border-radius:100px;padding:2px 8px;flex-shrink:0
+}
 .card-preview{position:relative;overflow:hidden;cursor:default}
 .card-hover{
   position:absolute;inset:0;opacity:0;transition:opacity 0.2s;
-  display:flex;align-items:flex-end;justify-content:flex-start;padding:10px;
+  background:rgba(10,10,10,0.06);display:flex;align-items:center;justify-content:center;
   pointer-events:none
 }
 .card-preview:hover .card-hover{opacity:1}
-.card-hint-text{
-  background:rgba(13,13,13,0.85);color:#fff;font-family:var(--fm);
-  font-size:8px;font-weight:500;padding:4px 10px;border-radius:100px;
-  letter-spacing:0.08em;text-transform:uppercase
+.card-hover span{
+  background:var(--black);color:var(--white);
+  font-size:9px;font-weight:700;padding:5px 12px;
+  border-radius:100px;letter-spacing:0.1em;text-transform:uppercase;
+  border:1px solid var(--border)
 }
 .card-bottom{
-  padding:8px 12px;border-top:1px solid var(--border);
-  display:flex;justify-content:flex-end;gap:7px;align-items:center
+  padding:10px 14px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;align-items:center;gap:8px
 }
-.btn-action{
-  background:none;color:var(--black);border:1px solid var(--border);
-  cursor:pointer;padding:5px 12px;border-radius:4px;font-family:var(--fi);
-  font-size:10px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;
+.btn-dl{
+  background:var(--dark2);color:var(--white);border:1px solid var(--border);
+  cursor:pointer;padding:7px 16px;border-radius:5px;font-family:var(--f);
+  font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
   transition:all 0.2s
 }
-.btn-action:hover{background:var(--black);color:#fff;border-color:var(--black)}
-.btn-action.red:hover{background:var(--red);border-color:var(--red)}
-.btn-action:disabled{opacity:0.4;cursor:not-allowed}
+.btn-dl:hover{background:var(--accent);border-color:var(--accent)}
+.btn-dl:disabled{opacity:0.4;cursor:not-allowed}
+.btn-swap{
+  background:none;color:var(--muted);border:1px solid var(--border);
+  cursor:pointer;padding:7px 14px;border-radius:5px;font-family:var(--f);
+  font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;
+  transition:all 0.2s
+}
+.btn-swap:hover{background:var(--dark2);color:var(--white);border-color:rgba(255,255,255,0.15)}
 
-/* ── ARTWORK ── */
-.artwork{position:relative;overflow:hidden;font-family:var(--fi);flex-shrink:0}
+/* ─── ARTWORK BASE ─── */
+.artwork{position:relative;overflow:hidden;font-family:var(--f);flex-shrink:0}
 .artwork.post{width:270px;height:270px}
 .artwork.story{width:270px;height:480px}
+.artwork.dark{background:var(--black)}
+.artwork.dark1{background:var(--dark1)}
+.artwork.dark2{background:var(--dark2)}
 .artwork.cream{background:var(--cream)}
-.artwork.photo-bg-wrap{background:var(--black)}
-.artwork.capturing [contenteditable]{outline:none!important}
+.artwork.capturing [contenteditable]{outline:none!important;box-shadow:none!important}
 
-/* ── EDITABLE ── */
-[contenteditable="true"]{outline:none;display:block;border-radius:2px;transition:outline 0.12s}
-[contenteditable="true"]:hover{outline:1px dashed rgba(201,34,42,0.4);outline-offset:1px;cursor:text}
-[contenteditable="true"]:focus{outline:1.5px solid var(--red);outline-offset:1px}
+/* ─── EDITABLE ─── */
+[contenteditable="true"]{outline:none;transition:outline 0.15s;border-radius:2px;display:block}
+[contenteditable="true"]:hover{outline:1px dashed rgba(255,69,0,0.5);outline-offset:2px;cursor:text}
+[contenteditable="true"]:focus{outline:1.5px solid var(--accent);outline-offset:2px}
 
-/* ── ATOMS ── */
-.a-logo{position:absolute;top:14px;left:16px;font-family:var(--fs);font-size:9px;font-weight:400;letter-spacing:-0.01em;color:rgba(13,13,13,0.35)}
-.a-logo span{color:var(--red)}
-.a-logo.w{color:rgba(255,255,255,0.45)}
-.a-logo.w span{color:rgba(255,255,255,0.7)}
-.a-slide{position:absolute;top:15px;right:16px;font-family:var(--fm);font-size:7px;letter-spacing:0.1em;color:rgba(13,13,13,0.28)}
-.a-slide.w{color:rgba(255,255,255,0.3)}
-.a-sig{position:absolute;bottom:13px;left:16px;font-family:var(--fm);font-size:6.5px;letter-spacing:0.12em;color:rgba(13,13,13,0.28)}
-.a-sig.w{color:rgba(255,255,255,0.3)}
+/* ─── SHARED PIECE ATOMS ─── */
+.a-logo{position:absolute;top:14px;left:16px;font-size:8px;font-weight:900;letter-spacing:-0.04em;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+.a-logo span{color:var(--accent)}
+.a-logo.dk{color:rgba(10,10,10,0.35)}
+.a-logo.dk span{color:var(--accent)}
+.a-slide{position:absolute;top:14px;right:16px;font-size:8px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.3)}
+.a-slide.dk{color:rgba(10,10,10,0.35)}
+.a-sig{position:absolute;bottom:13px;left:16px;font-size:7px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.a-sig.dk{color:rgba(10,10,10,0.3)}
 .a-sig.r{left:auto;right:16px}
-.a-red-bar{position:absolute;top:0;left:0;right:0;height:2px;background:var(--red)}
-.a-red-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--red);margin-right:8px;vertical-align:middle}
-.a-line{width:24px;height:1px;margin-bottom:10px}
-.a-line.dark{background:rgba(13,13,13,0.2)}
-.a-line.light{background:rgba(255,255,255,0.25)}
-.a-ghost{position:absolute;font-family:var(--fs);font-weight:700;font-size:80px;letter-spacing:-0.06em;line-height:1;color:rgba(13,13,13,0.04);user-select:none;pointer-events:none}
+.a-accent-bar{position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent)}
+.a-accent-bar.b{top:auto;bottom:0}
+.a-orange-line{width:28px;height:2px;background:var(--accent);margin-bottom:10px}
+.a-tag{font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:block}
+.a-divider{height:1px;background:var(--border);margin:10px 0}
+.a-divider.dk{background:rgba(10,10,10,0.12)}
 
-/* ── PHOTO OVERLAY ── */
+/* photo overlay */
+.photo-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.photo-overlay{position:absolute;inset:0}
+.photo-overlay.b2t{background:linear-gradient(to top,rgba(10,10,10,0.92) 0%,rgba(10,10,10,0.55) 55%,rgba(10,10,10,0.3) 100%)}
+.photo-overlay.full{background:rgba(10,10,10,0.65)}
+.photo-overlay.heavy{background:rgba(10,10,10,0.78)}
+
+/* ─── POST LAYOUTS ─── */
+
+/* P1 — Hero dark */
+.ly-hero{position:absolute;bottom:32px;left:16px;right:16px}
+.ly-hero .eyebrow{font-size:8px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;display:block}
+.ly-hero .hl{font-size:32px;font-weight:900;line-height:0.96;letter-spacing:-0.04em;color:var(--white);margin-bottom:9px}
+.ly-hero .sub{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:0.04em}
+
+/* P2,3,4 — Numbered */
+.ly-num{position:absolute;top:44px;bottom:30px;left:16px;right:16px;display:flex;flex-direction:column;justify-content:space-between}
+.ly-num .num{font-size:72px;font-weight:900;letter-spacing:-0.06em;line-height:1;color:rgba(255,255,255,0.04);position:absolute;bottom:28px;right:12px;font-variant-numeric:tabular-nums}
+.ly-num .hl{font-size:22px;font-weight:800;line-height:1.08;letter-spacing:-0.03em;color:var(--white);position:relative;z-index:1}
+.ly-num .body{font-size:10.5px;font-weight:400;color:var(--muted);line-height:1.65;position:relative;z-index:1}
+
+/* P5 — Resolution cream */
+.ly-res{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 18px}
+.ly-res .pre-line{font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.ly-res .hl-light{font-size:24px;font-weight:700;line-height:1.0;letter-spacing:-0.03em;color:rgba(10,10,10,0.45);margin-bottom:4px}
+.ly-res .hl-bold{font-size:32px;font-weight:900;line-height:0.95;letter-spacing:-0.04em;color:var(--black);margin-bottom:18px}
+.ly-res .hl-bold span{color:var(--accent)}
+.ly-res .brand{font-size:8.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--black)}
+
+/* P6 — Statement */
+.ly-stmt{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 16px}
+.ly-stmt .xl{font-size:36px;font-weight:900;line-height:0.95;letter-spacing:-0.05em;color:var(--white);margin-bottom:14px}
+.ly-stmt .xl span{color:var(--accent)}
+.ly-stmt .cta-hint{font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+
+/* P7 — Cinematic photo */
+.ly-cine{position:absolute;bottom:30px;left:16px;right:16px;z-index:2}
+.ly-cine .eyebrow{font-size:8px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:block}
+.ly-cine .big{font-size:44px;font-weight:900;line-height:0.9;letter-spacing:-0.05em;color:var(--white);margin-bottom:8px}
+.ly-cine .sub{font-size:10.5px;font-weight:500;color:rgba(255,255,255,0.55);letter-spacing:0.03em}
+
+/* P8 — Quote dark */
+.ly-qt{position:absolute;top:50%;left:16px;right:16px;transform:translateY(-50%)}
+.ly-qt .pre{font-size:8px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block}
+.ly-qt .qt{font-size:17px;font-weight:700;line-height:1.25;letter-spacing:-0.02em;color:var(--white);padding-left:12px;border-left:2.5px solid var(--accent);margin-bottom:12px}
+.ly-qt .body{font-size:10px;font-weight:400;color:var(--muted);line-height:1.6}
+
+/* P9 — Stats */
+.ly-stats{position:absolute;top:50%;left:16px;right:16px;transform:translateY(-50%)}
+.ly-stats .stat-row{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.ly-stats .stat-num{font-size:36px;font-weight:900;letter-spacing:-0.05em;color:var(--accent)}
+.ly-stats .stat-label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.04em}
+.ly-stats .concl{font-size:10px;font-weight:400;color:rgba(255,255,255,0.35);line-height:1.6;margin-top:10px}
+
+/* P10 — CTA cream */
+.ly-ctacream{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 18px}
+.ly-ctacream .eyebrow{font-size:8px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:block}
+.ly-ctacream .main{font-size:28px;font-weight:900;line-height:0.96;letter-spacing:-0.04em;color:var(--black);margin-bottom:16px}
+.ly-ctacream .link{font-size:9.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent)}
+
+/* P11 — Photo editorial */
+.ly-photo-ed{position:absolute;bottom:30px;left:16px;right:16px;z-index:2}
+.ly-photo-ed .fade{font-size:20px;font-weight:700;line-height:1.05;letter-spacing:-0.03em;color:rgba(255,255,255,0.4);margin-bottom:4px}
+.ly-photo-ed .bold{font-size:24px;font-weight:900;line-height:1.0;letter-spacing:-0.04em;color:var(--white)}
+.ly-photo-ed .bold span{color:var(--accent)}
+
+/* P12 — CTA dark bold */
+.ly-ctadark{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 16px}
+.ly-ctadark .big-num{font-size:72px;font-weight:900;letter-spacing:-0.06em;color:var(--accent);line-height:1;margin-bottom:6px}
+.ly-ctadark .hl{font-size:24px;font-weight:900;line-height:1.0;letter-spacing:-0.04em;color:var(--white);margin-bottom:12px}
+.ly-ctadark .sub{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:0.04em}
+
+/* ─── STORY LAYOUTS ─── */
+
+/* S13 — Poll photo */
+.ly-spoll{position:absolute;bottom:44px;left:20px;right:20px;z-index:2}
+.ly-spoll .q{font-size:26px;font-weight:900;line-height:1.05;letter-spacing:-0.04em;color:var(--white);margin-bottom:20px}
+.poll-opts{display:flex;flex-direction:column;gap:9px}
+.poll-opt{
+  border:1.5px solid rgba(255,255,255,0.25);border-radius:8px;
+  padding:11px 14px;font-size:12px;font-weight:700;
+  color:rgba(255,255,255,0.85);letter-spacing:0.02em;text-align:center
+}
+.poll-opt.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* S14 — Text photo */
+.ly-stxt{position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%);z-index:2}
+.ly-stxt .kicker{font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:block}
+.ly-stxt .hl{font-size:28px;font-weight:900;line-height:1.04;letter-spacing:-0.04em;color:var(--white);margin-bottom:12px}
+.ly-stxt .body{font-size:13px;font-weight:400;color:rgba(255,255,255,0.58);line-height:1.6}
+
+/* S15 — Steps */
+.ly-ssteps{position:absolute;top:60px;bottom:50px;left:20px;right:20px}
+.ly-ssteps .title{font-size:24px;font-weight:900;line-height:1.05;letter-spacing:-0.04em;color:var(--white);margin-bottom:24px}
+.step-list{display:flex;flex-direction:column;gap:14px}
+.step-it{display:flex;gap:14px;align-items:flex-start}
+.step-n{font-size:9px;font-weight:700;letter-spacing:0.1em;color:var(--accent);min-width:18px;padding-top:2px}
+.step-hl{font-size:13px;font-weight:700;color:var(--white);line-height:1.2;margin-bottom:2px}
+.step-sub{font-size:10px;font-weight:400;color:var(--muted);line-height:1.4}
+
+/* S16 — Question cream */
+.ly-sq{position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%)}
+.ly-sq .kicker{font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:block}
+.ly-sq .q{font-size:26px;font-weight:900;line-height:1.05;letter-spacing:-0.04em;color:var(--black);margin-bottom:22px}
+.open-box{
+  border:1.5px solid rgba(10,10,10,0.12);border-radius:8px;
+  padding:13px 14px;font-size:12px;color:rgba(10,10,10,0.28);
+  font-style:italic;font-weight:400
+}
+
+/* S17 — CTA dark */
+.ly-scta{position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%)}
+.ly-scta .urgency{font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;display:block}
+.ly-scta .msg{font-size:30px;font-weight:900;line-height:1.0;letter-spacing:-0.04em;color:var(--white);margin-bottom:8px}
+.ly-scta .sub{font-size:12px;font-weight:400;color:var(--muted);line-height:1.55;margin-bottom:26px}
+.cta-pill{
+  display:block;background:var(--accent);color:#fff;text-align:center;
+  padding:14px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase
+}
+
+/* ─── EXTRA LAYOUTS ─── */
 .p-bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .p-ov{position:absolute;inset:0}
-.p-ov.b2t{background:linear-gradient(to top,rgba(13,13,13,0.85) 0%,rgba(13,13,13,0.35) 55%,rgba(13,13,13,0.05) 100%)}
-.p-ov.t2b{background:linear-gradient(to bottom,rgba(13,13,13,0.75) 0%,rgba(13,13,13,0.1) 60%,rgba(13,13,13,0) 100%)}
-.p-ov.mid{background:rgba(13,13,13,0.45)}
-.p-ov.heavy{background:rgba(13,13,13,0.6)}
+.p-ov.b2t{background:linear-gradient(to top,rgba(10,10,10,0.88) 0%,rgba(10,10,10,0.35) 60%,rgba(10,10,10,0.05) 100%)}
+.p-ov.t2b{background:linear-gradient(to bottom,rgba(10,10,10,0.75) 0%,rgba(10,10,10,0.1) 60%,rgba(10,10,10,0) 100%)}
+.p-ov.mid{background:rgba(10,10,10,0.45)}
+.p-ov.heavy{background:rgba(10,10,10,0.65)}
+.ly-extra-b{position:absolute;bottom:26px;left:18px;right:18px;z-index:3}
+.ly-extra-t{position:absolute;top:26px;left:18px;right:18px;z-index:3}
+.ly-extra-c{position:absolute;top:50%;left:18px;right:18px;transform:translateY(-50%);z-index:3}
+.ly-extra-b .phrase,.ly-extra-t .phrase,.ly-extra-c .phrase{
+  font-size:22px;font-weight:900;line-height:1.08;letter-spacing:-0.04em;font-style:normal
+}
+.phrase.w{color:#fff}
+.phrase.dk{color:var(--black)}
+.extra-sig{font-size:7px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;margin-top:10px;display:block}
+.extra-sig.w{color:rgba(255,255,255,0.3)}
+.extra-sig.dk{color:rgba(10,10,10,0.3)}
 
-/* ── SEMANAL LAYOUTS ── */
-
-/* Cover */
-.ly-cover{position:absolute;bottom:36px;left:18px;right:18px}
-.ly-cover .tag{font-family:var(--fm);font-size:7.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);margin-bottom:10px;display:block}
-.ly-cover .hl{font-family:var(--fs);font-size:28px;font-weight:400;line-height:1.05;letter-spacing:-0.03em;color:var(--black);font-style:italic}
-.ly-cover .hl em{font-style:normal;font-weight:700}
-
-/* Numbered */
-.ly-num{position:absolute;top:46px;bottom:30px;left:18px;right:18px;display:flex;flex-direction:column;justify-content:space-between}
-.ly-num .num-tag{font-family:var(--fm);font-size:8px;font-weight:500;letter-spacing:0.1em;color:var(--red);margin-bottom:10px}
-.ly-num .hl{font-family:var(--fs);font-size:21px;font-weight:400;line-height:1.1;letter-spacing:-0.025em;color:var(--black)}
-.ly-num .body{font-family:var(--fi);font-size:10px;font-weight:300;color:var(--gris);line-height:1.7;letter-spacing:0.01em}
-
-/* Resolution */
-.ly-res{position:absolute;bottom:34px;left:18px;right:18px}
-.ly-res .pre{font-family:var(--fm);font-size:7.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gris);margin-bottom:12px;display:block}
-.ly-res .hl-light{font-family:var(--fs);font-size:22px;font-weight:300;line-height:1.05;letter-spacing:-0.025em;color:rgba(13,13,13,0.45);font-style:italic;margin-bottom:4px}
-.ly-res .hl-bold{font-family:var(--fs);font-size:26px;font-weight:700;line-height:1.0;letter-spacing:-0.035em;color:var(--red);margin-bottom:14px}
-.ly-res .brand{font-family:var(--fm);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(13,13,13,0.35)}
-
-/* Statement */
-.ly-stmt{position:absolute;top:50%;left:18px;right:18px;transform:translateY(-50%)}
-.ly-stmt .hl{font-family:var(--fs);font-size:34px;font-weight:700;line-height:0.97;letter-spacing:-0.04em;color:var(--black)}
-.ly-stmt .hl em{font-style:italic;font-weight:300;color:var(--gris)}
-.ly-stmt .cta{margin-top:16px;font-family:var(--fi);font-size:9px;font-weight:500;color:var(--gris);letter-spacing:0.08em;text-transform:uppercase}
-
-/* Insight */
-.ly-insight{position:absolute;top:50%;left:18px;right:18px;transform:translateY(-50%)}
-.ly-insight .pre{font-family:var(--fm);font-size:7.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:block}
-.ly-insight .hl{font-family:var(--fs);font-size:28px;font-weight:400;line-height:1.05;letter-spacing:-0.03em;color:var(--black);font-style:italic}
-
-/* CTA */
-.ly-cta{position:absolute;top:50%;left:18px;right:18px;transform:translateY(-50%)}
-.ly-cta .num{font-family:var(--fs);font-size:52px;font-weight:700;line-height:1;letter-spacing:-0.05em;color:rgba(13,13,13,0.07);margin-bottom:6px}
-.ly-cta .hl{font-family:var(--fs);font-size:26px;font-weight:400;line-height:1.05;letter-spacing:-0.03em;color:var(--black);font-style:italic;margin-bottom:14px}
-.ly-cta .link{font-family:var(--fi);font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red)}
-
-/* Photo post */
-.ly-photo{position:absolute;bottom:28px;left:18px;right:18px;z-index:3}
-.ly-photo .slide-tag{font-family:var(--fm);font-size:7.5px;letter-spacing:0.1em;color:rgba(255,255,255,0.45);margin-bottom:8px;display:block}
-.ly-photo .hl{font-family:var(--fs);font-size:28px;font-weight:700;line-height:1.0;letter-spacing:-0.035em;color:#fff}
-.ly-photo .sub{font-family:var(--fi);font-size:10px;font-weight:300;color:rgba(255,255,255,0.55);margin-top:7px;line-height:1.5}
-
-/* Story text */
-.ly-stxt{position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%)}
-.ly-stxt .pre{font-family:var(--fm);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:block}
-.ly-stxt .hl{font-family:var(--fs);font-size:30px;font-weight:400;line-height:1.05;letter-spacing:-0.03em;color:var(--black);font-style:italic;margin-bottom:12px}
-.ly-stxt .body{font-family:var(--fi);font-size:12px;font-weight:300;color:var(--gris);line-height:1.65}
-
-/* Story poll */
-.ly-spoll{position:absolute;bottom:50px;left:20px;right:20px}
-.ly-spoll .q{font-family:var(--fs);font-size:26px;font-weight:400;line-height:1.05;letter-spacing:-0.03em;color:var(--black);font-style:italic;margin-bottom:22px}
-.poll-opt{border:1px solid rgba(13,13,13,0.18);border-radius:7px;padding:11px 14px;font-family:var(--fi);font-size:12px;font-weight:500;color:var(--black);text-align:center;margin-bottom:8px}
-.poll-opt.fill{background:var(--black);color:#fff;border-color:var(--black)}
-
-/* Story photo */
-.ly-sphoto{position:absolute;bottom:50px;left:20px;right:20px;z-index:3}
-.ly-sphoto .hl{font-family:var(--fs);font-size:28px;font-weight:400;line-height:1.05;letter-spacing:-0.03em;color:#fff;font-style:italic;margin-bottom:10px}
-.ly-sphoto .body{font-family:var(--fi);font-size:12px;font-weight:300;color:rgba(255,255,255,0.6);line-height:1.6}
-
-/* Story question */
-.ly-sq{position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%)}
-.ly-sq .pre{font-family:var(--fm);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:block}
-.ly-sq .q{font-family:var(--fs);font-size:26px;font-weight:400;line-height:1.05;letter-spacing:-0.03em;color:var(--black);font-style:italic;margin-bottom:20px}
-.open-box{border:1px solid rgba(13,13,13,0.14);border-radius:7px;padding:12px 14px;font-family:var(--fi);font-size:11px;color:rgba(13,13,13,0.28);font-style:italic}
-
-/* Story CTA */
-.ly-scta{position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%)}
-.ly-scta .pre{font-family:var(--fm);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);margin-bottom:16px;display:block}
-.ly-scta .hl{font-family:var(--fs);font-size:28px;font-weight:400;line-height:1.05;letter-spacing:-0.03em;color:var(--black);font-style:italic;margin-bottom:8px}
-.ly-scta .sub{font-family:var(--fi);font-size:11px;font-weight:300;color:var(--gris);line-height:1.55;margin-bottom:24px}
-.cta-pill{display:block;background:var(--black);color:#fff;text-align:center;padding:12px;border-radius:6px;font-family:var(--fi);font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase}
-
-/* ── EXTRA LAYOUTS ── */
-.ly-extra-b{position:absolute;bottom:28px;left:20px;right:20px;z-index:3}
-.ly-extra-t{position:absolute;top:28px;left:20px;right:20px;z-index:3}
-.ly-extra-c{position:absolute;top:50%;left:20px;right:20px;transform:translateY(-50%);z-index:3}
-.ly-extra-b .phrase,.ly-extra-t .phrase,.ly-extra-c .phrase{font-family:var(--fs);font-size:24px;font-weight:400;line-height:1.1;letter-spacing:-0.03em;font-style:italic}
-.ly-extra-b .phrase.w,.ly-extra-t .phrase.w,.ly-extra-c .phrase.w{color:#fff}
-.ly-extra-b .phrase.dk,.ly-extra-t .phrase.dk,.ly-extra-c .phrase.dk{color:var(--black)}
-.extra-sig{font-family:var(--fm);font-size:7px;letter-spacing:0.12em;margin-top:10px;display:block}
-.extra-sig.w{color:rgba(255,255,255,0.35)}
-.extra-sig.dk{color:rgba(13,13,13,0.3)}
-
-/* ── TOAST ── */
-.toast{position:fixed;bottom:28px;right:28px;z-index:999;background:var(--black);color:#fff;border-radius:7px;padding:12px 20px;font-family:var(--fi);font-size:12px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);transform:translateY(10px);opacity:0;pointer-events:none;transition:all 0.25s}
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:32px;right:32px;z-index:999;
+  background:var(--dark2);color:var(--white);border:1px solid var(--border);
+  border-radius:8px;padding:14px 22px;font-size:13px;font-weight:600;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  transform:translateY(12px);opacity:0;pointer-events:none;transition:all 0.3s
+}
 .toast.show{transform:translateY(0);opacity:1}
 </style>
 </head>
 <body>
 
-<header class="dash-header">
+<nav class="dash-nav">
   <div class="dash-logo">Hora<span>Punta</span></div>
-  <div class="dash-tabs">
-    <button class="tab-btn active" onclick="showTab('semanal',this)">Semanal</button>
-    <button class="tab-btn" onclick="showTab('extra',this)">Banc d'imatges</button>
+  <div class="dash-nav-right">
+    <div class="dash-tabs">
+      <button class="tab-btn active" onclick="showTab('semanal',this)">Semanal</button>
+      <button class="tab-btn" onclick="showTab('extra',this)">Banc d'imatges</button>
+    </div>
+    <div class="dash-zips">
+      <button class="btn-zip" id="zipSemanal" onclick="downloadZip('semanal')">ZIP Semanal</button>
+      <button class="btn-zip" id="zipExtra" onclick="downloadZip('extra')" style="display:none">ZIP Extra</button>
+    </div>
   </div>
-  <div class="dash-zips">
-    <button class="btn-zip secondary" id="zipExtra" onclick="downloadZip('extra')" style="display:none">ZIP Extra</button>
-    <button class="btn-zip secondary" id="zipSemanal" onclick="downloadZip('semanal')">ZIP Semanal</button>
-  </div>
-</header>
+</nav>
 
 <div class="dash-section visible" id="sec-semanal"></div>
 <div class="dash-section" id="sec-extra"></div>
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── PATHS ── */
+/* ─── IMAGE PATHS ─── */
+const IMG = {
+  beer:  'imatges/yasin-aribuga-daMT4OR3Eac-unsplash.jpg',
+  bar:   'imatges/the-free-birds-c19EYwrW-EU-unsplash.jpg',
+  booth: 'imatges/carson-masterson-yuxr5ohFB-g-unsplash.jpg'
+};
 const I = {
   sitio:   'imatges/pexels-antonio-garcia-1662060750-28115690.jpg',
   cafe:    'imatges/pexels-novillolapeyra-11284639.jpg',
@@ -268,417 +336,466 @@ const I = {
   terrace: 'imatges/pexels-bingqian-li-230971044-30036913.jpg'
 };
 
-/* ── UTILS ── */
-const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
-function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+/* ─── SEMANAL DATA ─── */
+const DAYS = [
+  { label: 'Dilluns', pieces: [
+
+    { id:'p01', label:'Carrusel principal — 1/5', tag:'Post',
+      html:`<div class="artwork post dark">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">01/05</div>
+        <div class="ly-hero">
+          <span class="eyebrow" contenteditable="true">El problema real</span>
+          <div class="hl" contenteditable="true">Cinc coses<br>que et frenen.</div>
+          <div class="sub" contenteditable="true">I ningú et diu.</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p02', label:'Carrusel principal — 2/5', tag:'Post',
+      html:`<div class="artwork post dark1">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">02/05</div>
+        <div class="ly-num">
+          <div>
+            <span class="a-tag" contenteditable="true">01</span>
+            <div class="hl" contenteditable="true">Publiques cada dia<br>i esperes que arribin.</div>
+          </div>
+          <div>
+            <div class="a-divider"></div>
+            <div class="body" contenteditable="true">Les xarxes no porten gent.<br>Porten audiència.<br>Són coses molt diferents.</div>
+          </div>
+          <div class="num">01</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p03', label:'Carrusel principal — 3/5', tag:'Post',
+      html:`<div class="artwork post dark2">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">03/05</div>
+        <div class="ly-num">
+          <div>
+            <span class="a-tag" contenteditable="true">02</span>
+            <div class="hl" contenteditable="true">Pagues per contingut.<br>No per clients.</div>
+          </div>
+          <div>
+            <div class="a-divider"></div>
+            <div class="body" contenteditable="true">Els likes no es cobren.<br>Les taules plenes, sí.</div>
+          </div>
+          <div class="num">02</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p04', label:'Carrusel principal — 4/5', tag:'Post',
+      html:`<div class="artwork post dark1">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">04/05</div>
+        <div class="ly-num">
+          <div>
+            <span class="a-tag" contenteditable="true">03</span>
+            <div class="hl" contenteditable="true">El teu local no té cap raó<br>per existir fora del feed.</div>
+          </div>
+          <div>
+            <div class="a-divider"></div>
+            <div class="body" contenteditable="true">Si no passa res allà dins,<br>no passarà res al teu negoci.</div>
+          </div>
+          <div class="num">03</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p05', label:'Carrusel principal — 5/5', tag:'Post',
+      html:`<div class="artwork post cream">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo dk">Hora<span>Punta</span></div>
+        <div class="a-slide dk">05/05</div>
+        <div class="ly-res">
+          <span class="pre-line" contenteditable="true">La solució</span>
+          <div class="hl-light" contenteditable="true">La solució no és<br>més contingut.</div>
+          <div class="hl-bold"><span contenteditable="true">És més acció.</span></div>
+          <div class="a-divider dk"></div>
+          <div class="brand" contenteditable="true">Hora Punta — Activem negocis.</div>
+        </div>
+        <div class="a-sig dk">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p13', label:'Story — Poll', tag:'Story',
+      html:`<div class="artwork story dark">
+        <div class="photo-bg" style="background-image:url('${IMG.beer}');background-position:center 30%"></div>
+        <div class="photo-overlay heavy"></div>
+        <div class="a-accent-bar"></div>
+        <div class="a-logo" style="z-index:3">Hora<span>Punta</span></div>
+        <div class="ly-spoll">
+          <div class="q" contenteditable="true">El teu local és conegut<br>de veritat al barri?</div>
+          <div class="poll-opts">
+            <div class="poll-opt active" contenteditable="true">Sí, tothom ens coneix</div>
+            <div class="poll-opt" contenteditable="true">Hauria de ser-ho</div>
+          </div>
+        </div>
+        <div class="a-sig" style="z-index:3">@horapunta</div>
+      </div>`
+    }
+
+  ]},
+
+  { label: 'Dimarts', pieces: [
+
+    { id:'p06', label:'Post individual', tag:'Post',
+      html:`<div class="artwork post dark">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="ly-stmt">
+          <div class="xl" contenteditable="true">Tu vols clients.<br><span>No likes.</span></div>
+          <div class="cta-hint" contenteditable="true">Segueix si estàs d'acord</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p14', label:'Story — Opinió', tag:'Story',
+      html:`<div class="artwork story dark">
+        <div class="photo-bg" style="background-image:url('${IMG.bar}');background-position:center"></div>
+        <div class="photo-overlay full"></div>
+        <div class="a-accent-bar"></div>
+        <div class="a-logo" style="z-index:3">Hora<span>Punta</span></div>
+        <div class="ly-stxt">
+          <span class="kicker" contenteditable="true">Punt de vista</span>
+          <div class="hl" contenteditable="true">El problema<br>no és Instagram.</div>
+          <div class="body" contenteditable="true">És que creus que Instagram<br>és suficient per omplir el teu local.</div>
+        </div>
+        <div class="a-sig" style="z-index:3">@horapunta</div>
+      </div>`
+    }
+
+  ]},
+
+  { label: 'Dimecres', pieces: [
+
+    { id:'p07', label:'Carrusel secundari — 1/4', tag:'Post',
+      html:`<div class="artwork post dark">
+        <div class="photo-bg" style="background-image:url('${IMG.booth}');background-position:center"></div>
+        <div class="photo-overlay b2t"></div>
+        <div class="a-logo" style="z-index:3">Hora<span>Punta</span></div>
+        <div class="a-slide" style="z-index:3">01/04</div>
+        <div class="ly-cine" style="z-index:3">
+          <span class="eyebrow" contenteditable="true">Cas real</span>
+          <div class="big" contenteditable="true">47<br>runners.</div>
+          <div class="sub" contenteditable="true">Un dimarts. Les 8h del matí.</div>
+        </div>
+        <div class="a-sig" style="z-index:3">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p08', label:'Carrusel secundari — 2/4', tag:'Post',
+      html:`<div class="artwork post dark1">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">02/04</div>
+        <div class="ly-qt">
+          <span class="pre" contenteditable="true">El que va passar</span>
+          <div class="qt" contenteditable="true">Vam trucar al club de running del barri. El final de la ruta és aquí.</div>
+          <div class="body" contenteditable="true">Primera consumició inclosa.<br>Sense cap anunci. Sense cap story.</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p09', label:'Carrusel secundari — 3/4', tag:'Post',
+      html:`<div class="artwork post dark2">
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="a-slide">03/04</div>
+        <div class="ly-stats">
+          <div class="stat-row">
+            <span class="stat-num" contenteditable="true">23</span>
+            <span class="stat-label" contenteditable="true">persones — Setmana 1</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-num" contenteditable="true">47</span>
+            <span class="stat-label" contenteditable="true">persones — Setmana 4</span>
+          </div>
+          <div class="a-divider"></div>
+          <div class="concl" contenteditable="true">Cap anunci. Cap influencer.<br>Cap algoritme.</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p10', label:'Carrusel secundari — 4/4', tag:'Post',
+      html:`<div class="artwork post cream">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo dk">Hora<span>Punta</span></div>
+        <div class="a-slide dk">04/04</div>
+        <div class="ly-ctacream">
+          <span class="eyebrow" contenteditable="true">Màrqueting físic</span>
+          <div class="main" contenteditable="true">Això és<br>el que fem.</div>
+          <div class="link" contenteditable="true">Vols el mateix? Link a la bio →</div>
+        </div>
+        <div class="a-sig dk">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p15', label:'Story — Procés', tag:'Story',
+      html:`<div class="artwork story dark1">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="ly-ssteps">
+          <div class="title" contenteditable="true">Com portem<br>gent al teu local.</div>
+          <div class="step-list">
+            <div class="step-it">
+              <div class="step-n">01</div>
+              <div class="step-body">
+                <div class="step-hl" contenteditable="true">Identifiquem els clubs del barri</div>
+                <div class="step-sub" contenteditable="true">Run clubs, gimnasos, col·lectius actius</div>
+              </div>
+            </div>
+            <div class="step-it">
+              <div class="step-n">02</div>
+              <div class="step-body">
+                <div class="step-hl" contenteditable="true">Proposem el local com a punt de trobada</div>
+                <div class="step-sub" contenteditable="true">Primera consumició inclosa — acord clar</div>
+              </div>
+            </div>
+            <div class="step-it">
+              <div class="step-n">03</div>
+              <div class="step-body">
+                <div class="step-hl" contenteditable="true">Activació recurrent setmanal</div>
+                <div class="step-sub" contenteditable="true">Sense ads. Sense algoritme.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    }
+
+  ]},
+
+  { label: 'Dijous', pieces: [
+
+    { id:'p11', label:'Post individual', tag:'Post',
+      html:`<div class="artwork post dark">
+        <div class="photo-bg" style="background-image:url('${IMG.bar}');background-position:center 60%"></div>
+        <div class="photo-overlay heavy"></div>
+        <div class="a-accent-bar"></div>
+        <div class="a-logo" style="z-index:3">Hora<span>Punta</span></div>
+        <div class="ly-photo-ed" style="z-index:3">
+          <div class="fade" contenteditable="true">Una agència et fa un pla.</div>
+          <div class="bold" contenteditable="true">Nosaltres<br><span>l'executem.</span></div>
+        </div>
+        <div class="a-sig" style="z-index:3">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p16', label:'Story — Pregunta', tag:'Story',
+      html:`<div class="artwork story cream">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo dk">Hora<span>Punta</span></div>
+        <div class="ly-sq">
+          <span class="kicker" contenteditable="true">Pregunta oberta</span>
+          <div class="q" contenteditable="true">Quin és el principal obstacle del teu local ara mateix?</div>
+          <div class="open-box" contenteditable="true">Escriu aquí la teva resposta...</div>
+        </div>
+        <div class="a-sig dk">@horapunta</div>
+      </div>`
+    }
+
+  ]},
+
+  { label: 'Divendres', pieces: [
+
+    { id:'p12', label:'Post individual — CTA', tag:'Post',
+      html:`<div class="artwork post dark">
+        <div class="a-accent-bar"></div>
+        <div class="a-logo">Hora<span>Punta</span></div>
+        <div class="ly-ctadark">
+          <div class="big-num" contenteditable="true">20'</div>
+          <div class="hl" contenteditable="true">Sense PowerPoints.<br>Sense compromís.</div>
+          <div class="sub" contenteditable="true">Diagnosi gratuïta — link a la bio.</div>
+        </div>
+        <div class="a-sig">@horapunta</div>
+      </div>`
+    },
+
+    { id:'p17', label:'Story — CTA final', tag:'Story',
+      html:`<div class="artwork story dark">
+        <div class="photo-bg" style="background-image:url('${IMG.booth}');background-position:center;opacity:0.35"></div>
+        <div class="a-accent-bar"></div>
+        <div class="a-logo" style="z-index:3">Hora<span>Punta</span></div>
+        <div class="ly-scta" style="z-index:3">
+          <span class="urgency" contenteditable="true">Aquesta setmana</span>
+          <div class="msg" contenteditable="true">Tenim 2 places<br>de diagnosi.</div>
+          <div class="sub" contenteditable="true">La setmana vinent, no ho sabem.</div>
+          <div class="cta-pill" contenteditable="true">Link a la bio →</div>
+        </div>
+        <div class="a-sig" style="z-index:3">@horapunta</div>
+      </div>`
+    }
+
+  ]}
+];
+
+/* ─── EXTRA DATA ─── */
+const EXTRA = [
+  { id:'e01', label:'Un local amb caràcter', img:I.sitio,
+    phrase:'Un local amb caràcter no necessita que el busquis. El notes de lluny.',
+    ov:'b2t', pos_cls:'ly-extra-b', tc:'w' },
+  { id:'e02', label:'El carrer com a aparador', img:I.cafe,
+    phrase:'El que es veu des del carrer és el teu millor anunci.',
+    ov:'heavy', pos_cls:'ly-extra-c', tc:'w' },
+  { id:'e03', label:'Gent que no vol marxar', img:I.joves,
+    phrase:'Aquí no hi ha estratègia. Hi ha gent que no vol marxar.',
+    ov:'b2t', pos_cls:'ly-extra-b', tc:'w' },
+  { id:'e04', label:'Activació en estat pur', img:I.crowd,
+    phrase:'Això no passa sol. Algú ho va activar.',
+    ov:'heavy', pos_cls:'ly-extra-c', tc:'w' },
+  { id:'e05', label:'La cadira que espera', img:I.stool,
+    phrase:'Cada cadira buida és una pregunta sense resposta.',
+    ov:'b2t', pos_cls:'ly-extra-b', tc:'w' },
+  { id:'e06', label:'Llums enceses, local buit', img:I.glass,
+    phrase:'Tenir les llums enceses no és suficient.',
+    ov:'heavy', pos_cls:'ly-extra-c', tc:'w' },
+  { id:'e07', label:'El local que espera ser descobert', img:I.door,
+    phrase:'Existeixes. Però no tothom ho sap encara.',
+    ov:'b2t', pos_cls:'ly-extra-b', tc:'w' },
+  { id:'e08', label:'La gent ja és al carrer', img:I.street,
+    phrase:'La gent ja és al carrer. La pregunta és si entren.',
+    ov:'heavy', pos_cls:'ly-extra-c', tc:'w' },
+  { id:'e09', label:'Les taules que esperen', img:I.damm,
+    phrase:'Les taules no s\'omplen soles. Mai no ho han fet.',
+    ov:'b2t', pos_cls:'ly-extra-b', tc:'w' },
+  { id:'e10', label:'El barri es mou', img:I.terrace,
+    phrase:'El barri es mou tot el dia. El teu local, quan?',
+    ov:'heavy', pos_cls:'ly-extra-c', tc:'w' }
+];
+
+/* ─── UTILS ─── */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
 function showTab(id,btn){
   document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('visible'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('sec-'+id).classList.add('visible');
   btn.classList.add('active');
   document.getElementById('zipSemanal').style.display = id==='semanal'?'':'none';
-  document.getElementById('zipExtra').style.display = id==='extra'?'':'none';
+  document.getElementById('zipExtra').style.display   = id==='extra'?'':'none';
 }
 
-/* ── SEMANAL DATA ── */
-const DAYS = [
-  { label:'Dilluns', pieces:[
-    { id:'p01', label:'Carrusel principal — 1/5', tag:'Post',
-      html:`<div class="artwork post cream">
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="a-slide">01/05</div>
-        <div class="a-ghost" style="bottom:-10px;right:-8px">01</div>
-        <div class="ly-cover">
-          <span class="tag" contenteditable="true">Hora Punta</span>
-          <div class="hl" contenteditable="true">El que ningú t'ha explicat sobre per què el teu local <em>no creix.</em></div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    },
-    { id:'p02', label:'Carrusel principal — 2/5', tag:'Post',
-      html:`<div class="artwork post cream">
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="a-slide">02/05</div>
-        <div class="a-ghost" style="bottom:-8px;right:-6px">01</div>
-        <div class="ly-num">
-          <div>
-            <div class="num-tag" contenteditable="true">01</div>
-            <div class="hl" contenteditable="true">Tens seguidors. No tens clients. No és el mateix.</div>
-          </div>
-          <div>
-            <div class="a-line dark"></div>
-            <div class="body" contenteditable="true">Publicar cada dia no garanteix que ningú arribi al teu local. Mai no ho ha fet.</div>
-          </div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    },
-    { id:'p03', label:'Carrusel principal — 3/5', tag:'Post',
-      html:`<div class="artwork post cream">
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="a-slide">03/05</div>
-        <div class="a-ghost" style="bottom:-8px;right:-6px">02</div>
-        <div class="ly-num">
-          <div>
-            <div class="num-tag" contenteditable="true">02</div>
-            <div class="hl" contenteditable="true">Pagues contingut cada mes. El local segueix igual cada mes.</div>
-          </div>
-          <div>
-            <div class="a-line dark"></div>
-            <div class="body" contenteditable="true">El contingut crea presència. No crea trànsit. Són coses molt diferents.</div>
-          </div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    },
-    { id:'p04', label:'Carrusel principal — 4/5', tag:'Post',
-      html:`<div class="artwork post cream">
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="a-slide">04/05</div>
-        <div class="a-ghost" style="bottom:-8px;right:-6px">03</div>
-        <div class="ly-num">
-          <div>
-            <div class="num-tag" contenteditable="true">03</div>
-            <div class="hl" contenteditable="true">El teu barri no sap que existeixes. Cap post ho canviarà.</div>
-          </div>
-          <div>
-            <div class="a-line dark"></div>
-            <div class="body" contenteditable="true">La comunitat es construeix al carrer, no a l'algoritme.</div>
-          </div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    },
-    { id:'p05', label:'Carrusel principal — 5/5', tag:'Post',
-      html:`<div class="artwork post cream">
-        <div class="a-red-bar"></div>
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="a-slide">05/05</div>
-        <div class="ly-res">
-          <span class="pre" contenteditable="true">La solució</span>
-          <div class="hl-light" contenteditable="true">La solució no és més contingut.</div>
-          <div class="hl-bold" contenteditable="true">És activar el local.</div>
-          <div class="a-line dark"></div>
-          <div class="brand" contenteditable="true">Hora Punta — Activem negocis.</div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    },
-    { id:'p13', label:'Story — Poll', tag:'Story',
-      html:`<div class="artwork story cream">
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="ly-spoll">
-          <div class="q" contenteditable="true">El teu local és conegut de veritat al barri?</div>
-          <div class="poll-opt fill" contenteditable="true">Sí, tothom ens coneix</div>
-          <div class="poll-opt" contenteditable="true">Hauria de ser-ho</div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    }
-  ]},
+/* ─── RENDER SEMANAL ─── */
+const secSemanal = document.getElementById('sec-semanal');
+DAYS.forEach(day => {
+  const block = document.createElement('div');
+  block.className = 'day-block';
+  block.innerHTML = `<div class="day-header">
+    <span class="day-name">${day.label}</span>
+    <div class="day-sep"></div>
+    <span class="day-count">${day.pieces.length} peces</span>
+  </div>`;
+  const row = document.createElement('div');
+  row.className = 'pieces-row';
+  day.pieces.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'piece-card';
+    card.dataset.id = p.id;
+    card.dataset.section = 'semanal';
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="card-label">${p.label}</span>
+        <span class="card-tag">${p.tag}</span>
+      </div>
+      <div class="card-preview" id="prev-${p.id}">
+        ${p.html}
+        <div class="card-hover"><span>Edita el text</span></div>
+      </div>
+      <div class="card-bottom">
+        <button class="btn-dl" id="dl-${p.id}" onclick="dlPiece('${p.id}')">PNG</button>
+      </div>`;
+    row.appendChild(card);
+  });
+  block.appendChild(row);
+  secSemanal.appendChild(block);
+});
 
-  { label:'Dimarts', pieces:[
-    { id:'p06', label:'Post individual', tag:'Post',
-      html:`<div class="artwork post cream">
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="ly-stmt">
-          <div class="hl" contenteditable="true">Instagram no omple taules.<br><em>Omple feeds.</em></div>
-          <div class="cta" contenteditable="true">Segueix si estàs d'acord</div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    },
-    { id:'p14', label:'Story — Insight', tag:'Story',
-      html:`<div class="artwork story cream">
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="ly-stxt">
-          <span class="pre" contenteditable="true">Punt de vista</span>
-          <div class="hl" contenteditable="true">El contingut que fas no porta gent. Porta impressions.</div>
-          <div class="body" contenteditable="true">Les impressions no es cobren. Les taules plenes, sí.</div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    }
-  ]},
-
-  { label:'Dimecres', pieces:[
-    { id:'p07', label:'Carrusel secundari — 1/4', tag:'Post',
-      photo:true,
-      html:`<div class="artwork post photo-bg-wrap">
-        <div class="p-bg" id="bg-p07" style="background-image:url('${I.crowd}');background-position:center 40%"></div>
-        <div class="p-ov b2t"></div>
-        <div class="a-logo w">Hora<span>Punta</span></div>
-        <div class="a-slide w">01/04</div>
-        <div class="ly-photo">
-          <span class="slide-tag" contenteditable="true">Cas real</span>
-          <div class="hl" contenteditable="true">Això no passa sol.<br>Algú ho va activar.</div>
-          <div class="sub" contenteditable="true">Com ho fem. →</div>
-        </div>
-        <div class="a-sig w">@horapunta</div>
-      </div>`
-    },
-    { id:'p08', label:'Carrusel secundari — 2/4', tag:'Post',
-      photo:true,
-      html:`<div class="artwork post photo-bg-wrap">
-        <div class="p-bg" id="bg-p08" style="background-image:url('${I.joves}');background-position:center 30%"></div>
-        <div class="p-ov b2t"></div>
-        <div class="a-logo w">Hora<span>Punta</span></div>
-        <div class="a-slide w">02/04</div>
-        <div class="ly-photo">
-          <div class="hl" contenteditable="true">Quan la gent no vol marxar, algo has fet bé.</div>
-        </div>
-        <div class="a-sig w">@horapunta</div>
-      </div>`
-    },
-    { id:'p09', label:'Carrusel secundari — 3/4', tag:'Post',
-      html:`<div class="artwork post cream">
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="a-slide">03/04</div>
-        <div class="ly-insight">
-          <span class="pre" contenteditable="true">El mecanisme</span>
-          <div class="hl" contenteditable="true">Una trucada. Un acord. Un local ple cada dimarts.</div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    },
-    { id:'p10', label:'Carrusel secundari — 4/4', tag:'Post',
-      html:`<div class="artwork post cream">
-        <div class="a-red-bar"></div>
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="a-slide">04/04</div>
-        <div class="ly-cta">
-          <div class="hl" contenteditable="true">El teu local pot tenir el mateix.</div>
-          <div class="link" contenteditable="true">Parlem → Link a la bio</div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    },
-    { id:'p15', label:'Story — Procés', tag:'Story',
-      photo:true,
-      html:`<div class="artwork story photo-bg-wrap">
-        <div class="p-bg" id="bg-p15" style="background-image:url('${I.cafe}');background-position:center"></div>
-        <div class="p-ov heavy"></div>
-        <div class="a-logo w">Hora<span>Punta</span></div>
-        <div class="ly-sphoto">
-          <div class="hl" contenteditable="true">El que es veu des del carrer és el teu millor anunci.</div>
-          <div class="body" contenteditable="true">Nosaltres posem gent a dins perquè es vegi des de fora.</div>
-        </div>
-        <div class="a-sig w">@horapunta</div>
-      </div>`
-    }
-  ]},
-
-  { label:'Dijous', pieces:[
-    { id:'p11', label:'Post individual', tag:'Post',
-      html:`<div class="artwork post cream">
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="ly-stmt">
-          <div class="hl" contenteditable="true">No gestionem el teu Instagram.<br><em>Omplim el teu local.</em></div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    },
-    { id:'p16', label:'Story — Pregunta', tag:'Story',
-      html:`<div class="artwork story cream">
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="ly-sq">
-          <span class="pre" contenteditable="true">Pregunta oberta</span>
-          <div class="q" contenteditable="true">Quin és el principal fre del teu local ara mateix?</div>
-          <div class="open-box" contenteditable="true">Escriu aquí...</div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    }
-  ]},
-
-  { label:'Divendres', pieces:[
-    { id:'p12', label:'Post individual — CTA', tag:'Post',
-      html:`<div class="artwork post cream">
-        <div class="a-red-bar"></div>
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="ly-cta">
-          <div class="num">20'</div>
-          <div class="hl" contenteditable="true">Sense presentació. Sense promeses.</div>
-          <div class="link" contenteditable="true">Diagnosi gratuïta — link a la bio</div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    },
-    { id:'p17', label:'Story — CTA final', tag:'Story',
-      html:`<div class="artwork story cream">
-        <div class="a-red-bar"></div>
-        <div class="a-logo">Hora<span>Punta</span></div>
-        <div class="ly-scta">
-          <span class="pre" contenteditable="true">Aquesta setmana</span>
-          <div class="hl" contenteditable="true">Dues places de diagnosi.</div>
-          <div class="sub" contenteditable="true">La setmana vinent, no ho sabem.</div>
-          <div class="cta-pill" contenteditable="true">Link a la bio →</div>
-        </div>
-        <div class="a-sig">@horapunta</div>
-      </div>`
-    }
-  ]}
-];
-
-/* ── EXTRA DATA ── */
-const EXTRA = [
-  { id:'e01', label:'Un local amb caràcter', img:I.sitio,
-    pos:'bottom', ov:'b2t', tc:'w', pos_cls:'ly-extra-b',
-    phrase:'Un local amb caràcter no necessita que el busquis. El notes de lluny.'
-  },
-  { id:'e02', label:'El carrer com a aparador', img:I.cafe,
-    pos:'bottom', ov:'b2t', tc:'w', pos_cls:'ly-extra-b',
-    phrase:'El que es veu des del carrer és el teu millor anunci.'
-  },
-  { id:'e03', label:'Gent que no vol marxar', img:I.joves,
-    pos:'bottom', ov:'b2t', tc:'w', pos_cls:'ly-extra-b',
-    phrase:'Aquí no hi ha estratègia. Hi ha gent que no vol marxar.'
-  },
-  { id:'e04', label:'Activació en estat pur', img:I.crowd,
-    pos:'bottom', ov:'b2t', tc:'w', pos_cls:'ly-extra-b',
-    phrase:'Això no passa sol. Algú ho va activar.'
-  },
-  { id:'e05', label:'La cadira que espera', img:I.stool,
-    pos:'top', ov:'t2b', tc:'dk', pos_cls:'ly-extra-t',
-    phrase:'Cada cadira buida és una pregunta sense resposta.'
-  },
-  { id:'e06', label:'Llums enceses, local buit', img:I.glass,
-    pos:'bottom', ov:'b2t', tc:'w', pos_cls:'ly-extra-b',
-    phrase:'Tenir les llums enceses no és suficient.'
-  },
-  { id:'e07', label:'El local que espera ser descobert', img:I.door,
-    pos:'bottom', ov:'b2t', tc:'w', pos_cls:'ly-extra-b',
-    phrase:'Existeixes. Però no tothom ho sap encara.'
-  },
-  { id:'e08', label:'La gent ja és al carrer', img:I.street,
-    pos:'bottom', ov:'b2t', tc:'w', pos_cls:'ly-extra-b',
-    phrase:'La gent ja és al carrer. La pregunta és si entren.'
-  },
-  { id:'e09', label:'Les taules que esperen', img:I.damm,
-    pos:'bottom', ov:'b2t', tc:'w', pos_cls:'ly-extra-b',
-    phrase:'Les taules no s\'omplen soles. Mai no ho han fet.'
-  },
-  { id:'e10', label:'El barri es mou', img:I.terrace,
-    pos:'top', ov:'t2b', tc:'w', pos_cls:'ly-extra-t',
-    phrase:'El barri es mou tot el dia. El teu local, quan?'
-  }
-];
-
-/* ── RENDER SEMANAL ── */
-function buildCard(p, section) {
-  const card = document.createElement('div');
-  card.className = 'piece-card';
-  card.dataset.id = p.id;
-  card.dataset.section = section;
-  const isPhoto = !!p.photo;
-  card.innerHTML = `
-    <div class="card-top">
-      <span class="card-label">${p.label}</span>
-      <span class="card-tag">${p.tag}</span>
-    </div>
-    <div class="card-preview" id="prev-${p.id}">
-      ${p.html}
-      <div class="card-hover"><span class="card-hint-text">Edita el text</span></div>
-    </div>
-    <div class="card-bottom">
-      ${isPhoto ? `<button class="btn-action" onclick="swapImg('${p.id}')">Canviar foto</button>` : ''}
-      <button class="btn-action red" id="dl-${p.id}" onclick="dlPiece('${p.id}')">PNG</button>
-    </div>`;
-  return card;
-}
-
-function buildExtraCard(p) {
+/* ─── RENDER EXTRA ─── */
+const secExtra = document.getElementById('sec-extra');
+secExtra.innerHTML = '<div class="section-title">Banc de contingut — 10 imatges</div>';
+const extraRow = document.createElement('div');
+extraRow.className = 'pieces-row';
+EXTRA.forEach(p => {
   const card = document.createElement('div');
   card.className = 'piece-card';
   card.dataset.id = p.id;
   card.dataset.section = 'extra';
-  const sigClass = p.tc === 'w' ? 'w' : 'dk';
   card.innerHTML = `
     <div class="card-top">
       <span class="card-label">${p.label}</span>
       <span class="card-tag">Post</span>
     </div>
     <div class="card-preview" id="prev-${p.id}">
-      <div class="artwork post photo-bg-wrap" id="art-${p.id}">
+      <div class="artwork post" style="background:#0a0a0a" id="art-${p.id}">
         <div class="p-bg" id="bg-${p.id}" style="background-image:url('${p.img}')"></div>
         <div class="p-ov ${p.ov}"></div>
-        <div class="a-logo w">Hora<span>Punta</span></div>
+        <div class="a-logo" style="color:rgba(255,255,255,0.45)">Hora<span>Punta</span></div>
         <div class="${p.pos_cls}">
           <div class="phrase ${p.tc}" contenteditable="true">${p.phrase}</div>
-          <span class="extra-sig ${sigClass}">@horapunta</span>
+          <span class="extra-sig w">@horapunta</span>
         </div>
       </div>
-      <div class="card-hover"><span class="card-hint-text">Edita el text</span></div>
+      <div class="card-hover"><span>Edita el text</span></div>
     </div>
     <div class="card-bottom">
-      <button class="btn-action" onclick="swapImg('${p.id}','bg-${p.id}')">Canviar foto</button>
-      <button class="btn-action red" id="dl-${p.id}" onclick="dlPiece('${p.id}')">PNG</button>
+      <button class="btn-swap" onclick="swapImg('${p.id}','bg-${p.id}')">Canviar foto</button>
+      <button class="btn-dl" id="dl-${p.id}" onclick="dlPiece('${p.id}')">PNG</button>
     </div>`;
-  return card;
-}
-
-/* ── INIT SEMANAL ── */
-const secSemanal = document.getElementById('sec-semanal');
-DAYS.forEach(day => {
-  const block = document.createElement('div');
-  block.className = 'day-block';
-  block.innerHTML = `<div class="day-header"><span class="day-name">${day.label}</span><div class="day-sep"></div><span class="day-count">${day.pieces.length} peces</span></div>`;
-  const row = document.createElement('div');
-  row.className = 'pieces-row';
-  day.pieces.forEach(p => row.appendChild(buildCard(p, 'semanal')));
-  block.appendChild(row);
-  secSemanal.appendChild(block);
+  extraRow.appendChild(card);
 });
-
-/* ── INIT EXTRA ── */
-const secExtra = document.getElementById('sec-extra');
-secExtra.innerHTML = '<div class="section-title">Banc de contingut — 10 imatges</div>';
-const extraRow = document.createElement('div');
-extraRow.className = 'pieces-row';
-extraRow.style.flexWrap = 'wrap';
-EXTRA.forEach(p => extraRow.appendChild(buildExtraCard(p)));
 secExtra.appendChild(extraRow);
 
-/* ── SWAP IMAGE ── */
+/* ─── SWAP IMAGE ─── */
 function swapImg(pieceId, bgId) {
   const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
+  input.type = 'file'; input.accept = 'image/*';
   input.onchange = e => {
     const url = URL.createObjectURL(e.target.files[0]);
-    const bgEl = document.getElementById(bgId || 'bg-' + pieceId);
-    if (bgEl) bgEl.style.backgroundImage = `url('${url}')`;
+    document.getElementById(bgId || 'bg-'+pieceId).style.backgroundImage = `url('${url}')`;
   };
   input.click();
 }
 
-/* ── EXPORT SINGLE ── */
+/* ─── EXPORT SINGLE ─── */
 async function dlPiece(id) {
   const artwork = document.querySelector(`#prev-${id} .artwork`);
   const btn = document.getElementById('dl-'+id);
-  const isStory = artwork.classList.contains('story');
   btn.textContent='...'; btn.disabled=true;
   artwork.classList.add('capturing');
   try {
     const canvas = await html2canvas(artwork, {
-      scale: 4, useCORS: true, allowTaint: true,
-      backgroundColor: null, logging: false,
-      width: artwork.offsetWidth, height: artwork.offsetHeight
+      scale:4, useCORS:true, allowTaint:true,
+      backgroundColor:null, logging:false,
+      width:artwork.offsetWidth, height:artwork.offsetHeight
     });
     artwork.classList.remove('capturing');
-    canvas.toBlob(blob => { saveAs(blob, `horapunta-${id}.png`); showToast(`${id}.png descarregat`); });
+    canvas.toBlob(blob => { saveAs(blob,`horapunta-${id}.png`); showToast(`${id}.png descarregat`); });
   } catch(e) { artwork.classList.remove('capturing'); showToast('Error'); }
   btn.textContent='PNG'; btn.disabled=false;
 }
 
-/* ── EXPORT ZIP ── */
+/* ─── EXPORT ZIP ─── */
 async function downloadZip(section) {
-  const btnId = section === 'semanal' ? 'zipSemanal' : 'zipExtra';
+  const btnId = section==='semanal' ? 'zipSemanal' : 'zipExtra';
   const btn = document.getElementById(btnId);
   btn.textContent='Generant...'; btn.disabled=true;
   const zip = new JSZip();
   const cards = document.querySelectorAll(`[data-section="${section}"]`);
-  let i = 0;
+  let i=0;
   for (const card of cards) {
     const id = card.dataset.id;
     const artwork = card.querySelector('.artwork');
@@ -686,12 +803,12 @@ async function downloadZip(section) {
     artwork.classList.add('capturing');
     try {
       const canvas = await html2canvas(artwork, {
-        scale: 4, useCORS: true, allowTaint: true,
-        backgroundColor: null, logging: false,
-        width: artwork.offsetWidth, height: artwork.offsetHeight
+        scale:4, useCORS:true, allowTaint:true,
+        backgroundColor:null, logging:false,
+        width:artwork.offsetWidth, height:artwork.offsetHeight
       });
       artwork.classList.remove('capturing');
-      const blob = await new Promise(r => canvas.toBlob(r,'image/png'));
+      const blob = await new Promise(r=>canvas.toBlob(r,'image/png'));
       zip.file(`${String(++i).padStart(2,'0')}-${id}.png`, blob);
       showToast(`${i}/${cards.length} processades...`);
     } catch(e) { artwork.classList.remove('capturing'); }
