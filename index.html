@@ -420,9 +420,9 @@
       color: var(--accent);
     }
 
-    .problema__callout p {
+    #problema .problema__callout p {
       font-size: 15px;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.85);
       line-height: 1.6;
     }
 
@@ -977,6 +977,10 @@
       .hero__actions { flex-direction: column; align-items: flex-start; }
 
       .dif__table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .photo-quote { height: 52vh; min-height: 360px; }
+      .photo-quote__content { padding: 0 24px; }
+      .photo-grid { grid-template-columns: 1fr; }
+      .photo-cell { height: 300px; }
     }
 
     @media (max-width: 600px) {
@@ -997,6 +1001,150 @@
       .numbers-bar__num { font-size: 36px; }
       .cta-final__actions { width: 100%; }
       .cta-final__actions .btn { width: 100%; text-align: center; }
+    }
+
+    /* ─── HERO PHOTO ─── */
+    .hero__photo-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('imatges/pexels-antonio-garcia-1662060750-28115690.jpg');
+      background-size: cover;
+      background-position: center 40%;
+    }
+    .hero__photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(10,10,10,0.80) 0%, rgba(10,10,10,0.90) 100%);
+    }
+
+    /* ─── CALLOUT PHOTO ─── */
+    .problema__callout {
+      overflow: hidden;
+    }
+    .problema__callout::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('imatges/yasin-aribuga-daMT4OR3Eac-unsplash.jpg');
+      background-size: cover;
+      background-position: center 30%;
+      opacity: 0.18;
+      border-radius: 16px;
+    }
+    .problema__callout > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── PHOTO QUOTE ─── */
+    .photo-quote {
+      position: relative;
+      height: 68vh;
+      min-height: 460px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .photo-quote__bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 8s ease;
+    }
+    .photo-quote:hover .photo-quote__bg { transform: scale(1.03); }
+    .photo-quote__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.72) 100%);
+    }
+    .photo-quote__content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 40px;
+      max-width: 960px;
+    }
+    .photo-quote__eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 24px;
+    }
+    .photo-quote__text {
+      font-size: clamp(28px, 4.5vw, 56px);
+      font-weight: 900;
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+      color: var(--white);
+      margin-bottom: 28px;
+    }
+    .photo-quote__text em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .photo-quote__sig {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ─── PHOTO GRID ─── */
+    .photo-grid-section {
+      background: var(--black);
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .photo-cell {
+      position: relative;
+      height: 460px;
+      overflow: hidden;
+      cursor: default;
+    }
+    .photo-cell__img {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.7s ease;
+    }
+    .photo-cell:hover .photo-cell__img { transform: scale(1.05); }
+    .photo-cell__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.25) 55%, rgba(10,10,10,0.05) 100%);
+      transition: opacity 0.3s;
+    }
+    .photo-cell__content {
+      position: absolute;
+      bottom: 30px;
+      left: 26px;
+      right: 26px;
+      z-index: 2;
+    }
+    .photo-cell__phrase {
+      font-size: clamp(15px, 1.5vw, 19px);
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .photo-cell__tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
     }
 
     /* ─── SCROLL ANIMATIONS ─── */
@@ -1037,6 +1185,8 @@
      HERO
 ───────────────────────────────────────── -->
 <section id="hero">
+  <div class="hero__photo-bg"></div>
+  <div class="hero__photo-overlay"></div>
   <div class="hero__bg-text" aria-hidden="true">PUNTA</div>
 
   <div class="hero__container">
@@ -1046,9 +1196,9 @@
     </div>
 
     <h1 class="hero__headline">
-      No gestionem<br/>
-      xarxes. <em>Activem</em><br/>
-      negocis.
+      El teu local mereix<br/>
+      ser <em>l'hora punta</em><br/>
+      del barri.
     </h1>
 
     <p class="hero__sub">
@@ -1072,31 +1222,6 @@
 </section>
 
 
-<!-- ─────────────────────────────────────────
-     NUMBERS BAR
-───────────────────────────────────────── -->
-<div class="numbers-bar">
-  <div class="container">
-    <div class="numbers-bar__grid">
-      <div class="numbers-bar__item" data-reveal>
-        <div class="numbers-bar__num">+40<span>%</span></div>
-        <div class="numbers-bar__label">Increment de visites<br/>en els primers 90 dies</div>
-      </div>
-      <div class="numbers-bar__item" data-reveal data-reveal-delay="1">
-        <div class="numbers-bar__num">3<span>x</span></div>
-        <div class="numbers-bar__label">Retorn vs inversió<br/>en publicitat digital</div>
-      </div>
-      <div class="numbers-bar__item" data-reveal data-reveal-delay="2">
-        <div class="numbers-bar__num">0<span>€</span></div>
-        <div class="numbers-bar__label">Cost en social media ads<br/>— treballem diferent</div>
-      </div>
-      <div class="numbers-bar__item" data-reveal data-reveal-delay="3">
-        <div class="numbers-bar__num">100<span>%</span></div>
-        <div class="numbers-bar__label">Execució real<br/>sense excuses</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 <!-- ─────────────────────────────────────────
@@ -1105,7 +1230,7 @@
 <section id="problema" class="section-pad">
   <div class="container">
     <span class="eyebrow">El problema real</span>
-    <h2>Per què el teu local<br/>no creix com hauria.</h2>
+    <h2>Per què el teu local<br/>no creix.</h2>
 
     <div class="problema__grid">
       <ul class="pain-list" data-reveal>
@@ -1113,28 +1238,24 @@
           <span class="pain-list__num">01</span>
           <div>
             <div class="pain-list__text">Publiques cada dia i el local segueix igual</div>
-            <div class="pain-list__sub">Instagram no porta gent. Porta seguidors que mai passen la porta.</div>
           </div>
         </li>
         <li class="pain-list__item">
           <span class="pain-list__num">02</span>
           <div>
             <div class="pain-list__text">Pagues una agència i no veus resultats reals</div>
-            <div class="pain-list__sub">Et fan reports de "impressions" i "engagement". Tu vols tiquets. No likes.</div>
           </div>
         </li>
         <li class="pain-list__item">
           <span class="pain-list__num">03</span>
           <div>
             <div class="pain-list__text">El teu local no connecta amb cap comunitat</div>
-            <div class="pain-list__sub">Ets un local de barri però ningú del barri sap que existeixes de veritat.</div>
           </div>
         </li>
         <li class="pain-list__item">
           <span class="pain-list__num">04</span>
           <div>
             <div class="pain-list__text">No tens temps ni idees per fer coses diferents</div>
-            <div class="pain-list__sub">Estàs pendent del dia a dia. Necessites algú que pensi i executi per tu.</div>
           </div>
         </li>
       </ul>
@@ -1145,11 +1266,7 @@
             "El problema no és que no tinguis màrqueting. És que tens <em>el màrqueting equivocat.</em>"
           </div>
           <p>
-            La majoria de locals gasten en contingut digital que no converteix. Ningú t'ensenya que la gent va a llocs per experiències, per recomanació, per pertinença — no per un Reel ben editat.
-          </p>
-          <br/>
-          <p>
-            Nosaltres no venim a gestionar el teu Instagram. Venim a canviar com perceben el teu local.
+            La gent va a llocs per experiències i pertinença — no per un Reel ben editat. Nosaltres no gestionem el teu Instagram. Venim a canviar com perceben el teu local.
           </p>
         </div>
       </div>
@@ -1166,27 +1283,25 @@
     <div class="solucio__intro" data-reveal>
       <span class="eyebrow">La solució</span>
       <h2>Màrqueting que es nota al carrer, no a la pantalla.</h2>
-      <br/>
-      <p>Activem el teu local des de dins: connectant-lo amb comunitats reals, creant experiències que la gent busca i generant moviment que es veu, es viu i es comenta.</p>
     </div>
 
     <div class="solucio__cards">
       <div class="solucio__card" data-reveal>
         <span class="solucio__card-icon">⚡</span>
         <h3>Activacions físiques</h3>
-        <p>Dissenyem i executem accions al teu local que generen afluència real: events, col·laboracions, experiències úniques. Coses que passen de debò.</p>
+        <p>Events, col·laboracions i experiències que porten gent real al teu local.</p>
         <div class="solucio__card-tag">Impacte directe</div>
       </div>
       <div class="solucio__card" data-reveal data-reveal-delay="1">
         <span class="solucio__card-icon">🔗</span>
         <h3>Connexió amb comunitats</h3>
-        <p>T'introduïm en ecosistemes locals actius: run clubs, gimnasos, festivals, associacions, col·lectius. La teva cafeteria es converteix en el seu punt de trobada.</p>
+        <p>Run clubs, gimnasos, col·lectius. El teu local es converteix en el seu punt de trobada.</p>
         <div class="solucio__card-tag">Comunitat real</div>
       </div>
       <div class="solucio__card" data-reveal data-reveal-delay="2">
         <span class="solucio__card-icon">🧠</span>
         <h3>Estratègia i execució</h3>
-        <p>No som consultors que et donen un PDF i marxen. Dissenyem, coordinem i executem tot plegats. Tu veus resultats, no presentacions.</p>
+        <p>No donem PDFs i marxem. Dissenyem, executem i estarem allà el dia de l'acció.</p>
         <div class="solucio__card-tag">Tot inclòs</div>
       </div>
     </div>
@@ -1204,16 +1319,13 @@
         <span class="eyebrow">Exemples d'accions</span>
         <h2>Coses que fem. De veritat.</h2>
       </div>
-      <div data-reveal data-reveal-delay="1">
-        <p>Cada acció és diferent perquè cada local és diferent. Però aquí tens una mostra del que posem en marxa.</p>
-      </div>
     </div>
 
     <div class="accions__grid">
       <div class="accio" data-reveal>
         <div class="accio__label">Activació 01</div>
         <h3>After run al teu local</h3>
-        <p>Connectem el teu cafè amb els principals run clubs de la ciutat. Cada dimarts i dijous, 30-60 runners acaben la ruta al teu local. Primera consumició pactada. Comunitat fidelitzada.</p>
+        <p>30–60 runners acaben la ruta al teu local cada setmana. Sense anuncis.</p>
         <div class="accio__tags">
           <span class="tag">Run clubs</span>
           <span class="tag">Fidelització</span>
@@ -1224,7 +1336,7 @@
       <div class="accio" data-reveal data-reveal-delay="1">
         <div class="accio__label">Activació 02</div>
         <h3>Brunch post-event</h3>
-        <p>Coordinem amb festivals, mercats i activitats del barri perquè el teu local sigui el punt de reunió post-event. Gent amb gana, ganes de quedar-se i predisposició a gastar.</p>
+        <p>El teu local, punt de trobada després de festivals i mercats del barri.</p>
         <div class="accio__tags">
           <span class="tag">Festivals</span>
           <span class="tag">Mercats</span>
@@ -1235,7 +1347,7 @@
       <div class="accio" data-reveal data-reveal-delay="2">
         <div class="accio__label">Activació 03</div>
         <h3>Col·laboració de marca local</h3>
-        <p>Associem el teu local amb torrefactors, bruteries, floristeries o artistes de la zona. Productes exclusius, edicions limitades, experiències que la gent vol compartir.</p>
+        <p>Productes exclusius amb torrefactors, artistes i negocis de la zona.</p>
         <div class="accio__tags">
           <span class="tag">Col·laboració</span>
           <span class="tag">Producte</span>
@@ -1245,8 +1357,8 @@
 
       <div class="accio" data-reveal data-reveal-delay="3">
         <div class="accio__label">Activació 04</div>
-        <h3>Sessions de comunitat temàtiques</h3>
-        <p>Book clubs, sessions de networking per a freelancers, tastets matinals de cafè d'especialitat. El teu local es converteix en destí, no en opció.</p>
+        <h3>Sessions de comunitat</h3>
+        <p>Book clubs, networking, tastets. El teu local es converteix en destí.</p>
         <div class="accio__tags">
           <span class="tag">Events</span>
           <span class="tag">Networking</span>
@@ -1301,13 +1413,46 @@
 
 
 <!-- ─────────────────────────────────────────
+     PHOTO GRID
+───────────────────────────────────────── -->
+<section class="photo-grid-section">
+  <div class="photo-grid">
+    <div class="photo-cell" data-reveal>
+      <div class="photo-cell__img" style="background-image:url('imatges/pexels-novillolapeyra-11284639.jpg');background-position:center"></div>
+      <div class="photo-cell__overlay"></div>
+      <div class="photo-cell__content">
+        <div class="photo-cell__phrase">El que es veu des del carrer és el teu millor anunci.</div>
+        <div class="photo-cell__tag">Presència física</div>
+      </div>
+    </div>
+    <div class="photo-cell" data-reveal data-reveal-delay="1">
+      <div class="photo-cell__img" style="background-image:url('imatges/pexels-bingqian-li-230971044-30036913.jpg');background-position:center"></div>
+      <div class="photo-cell__overlay"></div>
+      <div class="photo-cell__content">
+        <div class="photo-cell__phrase">El barri es mou tot el dia. El teu local, quan?</div>
+        <div class="photo-cell__tag">Activació</div>
+      </div>
+    </div>
+    <div class="photo-cell" data-reveal data-reveal-delay="2">
+      <div class="photo-cell__img" style="background-image:url('imatges/pexels-esrakorkmaz-19723776.jpg');background-position:center"></div>
+      <div class="photo-cell__overlay"></div>
+      <div class="photo-cell__content">
+        <div class="photo-cell__phrase">Tenir les llums enceses no és suficient.</div>
+        <div class="photo-cell__tag">Moviment real</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────────
      CTA FINAL
 ───────────────────────────────────────── -->
 <section id="cta-final" class="section-pad--lg">
   <div class="container">
     <div class="cta-final__inner" data-reveal>
       <span class="eyebrow">Ara és el moment</span>
-      <h2>El teu local mereix<br/>ser <em>l'hora punta</em><br/>del barri.</h2>
+      <h2><em>Comença a omplir</em><br/>taules.</h2>
       <p class="cta-final__sub">Parlem 20 minuts. Sense compromís. Et diem exactament el que farem i com — i tu decideixes si té sentit.</p>
 
       <div class="cta-final__actions">
