@@ -770,6 +770,30 @@ function swapImg(pieceId, bgId) {
   input.click();
 }
 
+/* ─── HTML2CANVAS CONFIG ─── */
+async function captureArtwork(artwork) {
+  return html2canvas(artwork, {
+    scale: 4,
+    useCORS: false,
+    allowTaint: true,
+    backgroundColor: '#0a0a0a',
+    logging: false,
+    imageTimeout: 0,
+    width: artwork.offsetWidth,
+    height: artwork.offsetHeight
+  });
+}
+
+function canvasToBlob(canvas) {
+  return new Promise((resolve) => {
+    try {
+      canvas.toBlob(blob => resolve(blob || null), 'image/png');
+    } catch(e) {
+      resolve(null);
+    }
+  });
+}
+
 /* ─── EXPORT SINGLE ─── */
 async function dlPiece(id) {
   const artwork = document.querySelector(`#prev-${id} .artwork`);
@@ -777,14 +801,12 @@ async function dlPiece(id) {
   btn.textContent='...'; btn.disabled=true;
   artwork.classList.add('capturing');
   try {
-    const canvas = await html2canvas(artwork, {
-      scale:4, useCORS:true, allowTaint:true,
-      backgroundColor:null, logging:false,
-      width:artwork.offsetWidth, height:artwork.offsetHeight
-    });
+    const canvas = await captureArtwork(artwork);
     artwork.classList.remove('capturing');
-    canvas.toBlob(blob => { saveAs(blob,`horapunta-${id}.png`); showToast(`${id}.png descarregat`); });
-  } catch(e) { artwork.classList.remove('capturing'); showToast('Error'); }
+    const blob = await canvasToBlob(canvas);
+    if (blob) { saveAs(blob, `horapunta-${id}.png`); showToast(`${id}.png descarregat`); }
+    else { showToast('Error: obre el fitxer amb un servidor local'); }
+  } catch(e) { artwork.classList.remove('capturing'); showToast('Error en la captura'); }
   btn.textContent='PNG'; btn.disabled=false;
 }
 
@@ -795,27 +817,35 @@ async function downloadZip(section) {
   btn.textContent='Generant...'; btn.disabled=true;
   const zip = new JSZip();
   const cards = document.querySelectorAll(`[data-section="${section}"]`);
-  let i=0;
+  let i=0, errors=0;
   for (const card of cards) {
     const id = card.dataset.id;
     const artwork = card.querySelector('.artwork');
     if (!artwork) continue;
     artwork.classList.add('capturing');
     try {
-      const canvas = await html2canvas(artwork, {
-        scale:4, useCORS:true, allowTaint:true,
-        backgroundColor:null, logging:false,
-        width:artwork.offsetWidth, height:artwork.offsetHeight
-      });
+      const canvas = await captureArtwork(artwork);
       artwork.classList.remove('capturing');
-      const blob = await new Promise(r=>canvas.toBlob(r,'image/png'));
-      zip.file(`${String(++i).padStart(2,'0')}-${id}.png`, blob);
-      showToast(`${i}/${cards.length} processades...`);
-    } catch(e) { artwork.classList.remove('capturing'); }
+      const blob = await canvasToBlob(canvas);
+      if (blob) {
+        zip.file(`${String(++i).padStart(2,'0')}-${id}.png`, blob);
+        showToast(`${i}/${cards.length} processades...`);
+      } else {
+        errors++;
+        artwork.classList.remove('capturing');
+      }
+    } catch(e) { artwork.classList.remove('capturing'); errors++; }
+  }
+  if (i === 0) {
+    showToast('Cap imatge capturada. Obre el fitxer amb un servidor local.');
+    btn.textContent = section==='semanal' ? 'ZIP Semanal' : 'ZIP Extra';
+    btn.disabled = false;
+    return;
   }
   const zb = await zip.generateAsync({type:'blob'});
   saveAs(zb, `horapunta-${section}.zip`);
-  showToast('ZIP descarregat.');
+  const msg = errors > 0 ? `ZIP descarregat (${errors} fotos omeses per CORS)` : 'ZIP descarregat!';
+  showToast(msg);
   btn.textContent = section==='semanal' ? 'ZIP Semanal' : 'ZIP Extra';
   btn.disabled = false;
 }
