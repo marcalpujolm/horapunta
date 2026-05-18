@@ -671,7 +671,42 @@ const EXTRA = [
     ov:'b2t', pos_cls:'ly-extra-b', tc:'w' },
   { id:'e10', label:'El barri es mou', img:I.terrace,
     phrase:'El barri es mou tot el dia. El teu local, quan?',
-    ov:'heavy', pos_cls:'ly-extra-c', tc:'w' }
+    ov:'heavy', pos_cls:'ly-extra-c', tc:'w' },
+  { id:'e11', label:'Presentació 01/03 — Portada', html:`<div class="artwork post" style="background:#0a0a0a" id="art-e11">
+    <div class="p-bg" id="bg-e11" style="background-image:url('imatges/pexels-novillolapeyra-11284639.jpg')"></div>
+    <div class="p-ov" style="background:rgba(10,10,10,0.82)"></div>
+    <div class="a-slide">01/03</div>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;padding:24px;text-align:center;gap:14px">
+      <div style="font-size:30px;font-weight:900;letter-spacing:-0.05em;color:#fff;line-height:1">HORA<span style="color:#FF4500">PUNTA</span></div>
+      <div style="width:32px;height:2px;background:#FF4500;flex-shrink:0"></div>
+      <div style="font-size:13px;font-weight:800;color:#fff;line-height:1.25;letter-spacing:-0.02em" contenteditable="true">Amb unes bones braves i un bon servei no és suficient.</div>
+    </div>
+    <span class="extra-sig w" style="position:absolute;bottom:16px;left:18px;z-index:3">@horapunta</span>
+  </div>` },
+  { id:'e12', label:'Presentació 02/03 — Què fem?', html:`<div class="artwork post" style="background:#0a0a0a" id="art-e12">
+    <div class="p-bg" id="bg-e12" style="background-image:url('imatges/pexels-joaquin-carfagna-3131171-20252172.jpg')"></div>
+    <div class="p-ov b2t"></div>
+    <div class="a-logo" style="color:rgba(255,255,255,0.45)">Hora<span>Punta</span></div>
+    <div class="a-slide">02/03</div>
+    <div style="position:absolute;bottom:22px;left:18px;right:18px;z-index:3">
+      <div style="font-size:8px;font-weight:800;letter-spacing:0.15em;color:#FF4500;text-transform:uppercase;margin-bottom:10px">Què fem?</div>
+      <div style="font-size:20px;font-weight:900;letter-spacing:-0.04em;color:#fff;line-height:1.05" contenteditable="true">Activem locals.<br/>Connectem comunitats.<br/>Creem moviment real.</div>
+      <span class="extra-sig w">@horapunta</span>
+    </div>
+  </div>` },
+  { id:'e13', label:'Presentació 03/03 — Qui som?', html:`<div class="artwork post" style="background:#0a0a0a" id="art-e13">
+    <div class="p-bg" id="bg-e13" style="background-image:url('imatges/the-free-birds-c19EYwrW-EU-unsplash.jpg')"></div>
+    <div class="p-ov heavy"></div>
+    <div class="a-logo" style="color:rgba(255,255,255,0.45)">Hora<span>Punta</span></div>
+    <div class="a-slide">03/03</div>
+    <div style="position:absolute;bottom:22px;left:18px;right:18px;z-index:3">
+      <div style="font-size:8px;font-weight:800;letter-spacing:0.15em;color:#FF4500;text-transform:uppercase;margin-bottom:10px">Qui som?</div>
+      <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.72);line-height:1.35;margin-bottom:10px" contenteditable="true">Consultoria de màrqueting físic per a cafès i bars de Barcelona.</div>
+      <div style="width:28px;height:2px;background:#FF4500;margin-bottom:10px"></div>
+      <div style="font-size:16px;font-weight:900;letter-spacing:-0.04em;color:#fff;line-height:1.05" contenteditable="true">No gestionem xarxes.<br/>Activem negocis.</div>
+      <span class="extra-sig w">@horapunta</span>
+    </div>
+  </div>` }
 ];
 
 /* ─── UTILS ─── */
@@ -726,7 +761,7 @@ DAYS.forEach(day => {
 
 /* ─── RENDER EXTRA ─── */
 const secExtra = document.getElementById('sec-extra');
-secExtra.innerHTML = '<div class="section-title">Banc de contingut — 10 imatges</div>';
+secExtra.innerHTML = '<div class="section-title">Banc de contingut — 13 imatges</div>';
 const extraRow = document.createElement('div');
 extraRow.className = 'pieces-row';
 EXTRA.forEach(p => {
@@ -734,25 +769,28 @@ EXTRA.forEach(p => {
   card.className = 'piece-card';
   card.dataset.id = p.id;
   card.dataset.section = 'extra';
+  const artworkHtml = p.html || `
+    <div class="artwork post" style="background:#0a0a0a" id="art-${p.id}">
+      <div class="p-bg" id="bg-${p.id}" style="background-image:url('${p.img}')"></div>
+      <div class="p-ov ${p.ov}"></div>
+      <div class="a-logo" style="color:rgba(255,255,255,0.45)">Hora<span>Punta</span></div>
+      <div class="${p.pos_cls}">
+        <div class="phrase ${p.tc}" contenteditable="true">${p.phrase}</div>
+        <span class="extra-sig w">@horapunta</span>
+      </div>
+    </div>`;
+  const swapBtn = p.html ? '' : `<button class="btn-swap" onclick="swapImg('${p.id}','bg-${p.id}')">Canviar foto</button>`;
   card.innerHTML = `
     <div class="card-top">
       <span class="card-label">${p.label}</span>
       <span class="card-tag">Post</span>
     </div>
     <div class="card-preview" id="prev-${p.id}">
-      <div class="artwork post" style="background:#0a0a0a" id="art-${p.id}">
-        <div class="p-bg" id="bg-${p.id}" style="background-image:url('${p.img}')"></div>
-        <div class="p-ov ${p.ov}"></div>
-        <div class="a-logo" style="color:rgba(255,255,255,0.45)">Hora<span>Punta</span></div>
-        <div class="${p.pos_cls}">
-          <div class="phrase ${p.tc}" contenteditable="true">${p.phrase}</div>
-          <span class="extra-sig w">@horapunta</span>
-        </div>
-      </div>
+      ${artworkHtml}
       <div class="card-hover"><span>Edita el text</span></div>
     </div>
     <div class="card-bottom">
-      <button class="btn-swap" onclick="swapImg('${p.id}','bg-${p.id}')">Canviar foto</button>
+      ${swapBtn}
       <button class="btn-dl" id="dl-${p.id}" onclick="dlPiece('${p.id}')">PNG</button>
     </div>`;
   extraRow.appendChild(card);
