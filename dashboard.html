@@ -642,6 +642,14 @@ const DAYS = [
 
 /* ─── EXTRA DATA ─── */
 const EXTRA = [
+  { id:'e00', label:'Foto de perfil — Instagram', html:`<div class="artwork post" style="background:#0a0a0a" id="art-e00">
+    <div class="p-bg" id="bg-e00" style="background-image:url('imatges/pexels-nick-gorniok-495871763-35550986.jpg')"></div>
+    <div class="p-ov" style="background:rgba(10,10,10,0.88)"></div>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;text-align:center;gap:0">
+      <div style="font-size:46px;font-weight:900;letter-spacing:-0.05em;color:#fff;line-height:0.88">HORA</div>
+      <div style="font-size:46px;font-weight:900;letter-spacing:-0.05em;color:#FF4500;line-height:0.88">PUNTA</div>
+    </div>
+  </div>` },
   { id:'e01', label:'Un local amb caràcter', img:I.sitio,
     phrase:'Un local amb caràcter no necessita que el busquis. El notes de lluny.',
     ov:'b2t', pos_cls:'ly-extra-b', tc:'w' },
@@ -761,7 +769,7 @@ DAYS.forEach(day => {
 
 /* ─── RENDER EXTRA ─── */
 const secExtra = document.getElementById('sec-extra');
-secExtra.innerHTML = '<div class="section-title">Posts (1:1) — 13 imatges</div>';
+secExtra.innerHTML = '<div class="section-title">Posts (1:1) — 14 imatges</div>';
 const extraRow = document.createElement('div');
 extraRow.className = 'pieces-row';
 EXTRA.forEach(p => {
