@@ -294,6 +294,63 @@ body{font-family:var(--f);background:var(--black);color:var(--white);-webkit-fon
   transform:translateY(12px);opacity:0;pointer-events:none;transition:all 0.3s
 }
 .toast.show{transform:translateY(0);opacity:1}
+
+/* ─── REEL SECTION ─── */
+.reel-layout{display:grid;grid-template-columns:290px 1fr;gap:48px;align-items:start}
+.reel-preview-wrap{position:relative}
+.reel-preview{width:270px;height:480px;position:relative;overflow:hidden;border-radius:16px;background:#0a0a0a;box-shadow:0 24px 80px rgba(0,0,0,0.7);flex-shrink:0}
+.reel-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.7s ease;background-size:cover;background-position:center}
+.reel-slide.active{opacity:1}
+.reel-slide.zoom{animation:kenBurns 5s ease-out forwards}
+@keyframes kenBurns{from{transform:scale(1)}to{transform:scale(1.06)}}
+.reel-ov{position:absolute;inset:0}
+.reel-text-wrap{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;padding:28px}
+.reel-text-wrap.center{align-items:center;justify-content:center;text-align:center}
+.reel-text-wrap.bottom{align-items:flex-start;justify-content:flex-end}
+.reel-main-text{font-size:20px;font-weight:900;letter-spacing:-0.04em;color:#fff;line-height:1.1;opacity:0;transition:opacity 0.5s ease 0.3s}
+.reel-main-text.visible{opacity:1}
+.reel-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;transition:opacity 0.5s ease 0.3s}
+.reel-logo-wrap.visible{opacity:1}
+.reel-logo-big{font-size:38px;font-weight:900;letter-spacing:-0.06em;color:#fff;line-height:1}
+.reel-logo-big span{color:#FF4500}
+.reel-logo-div{width:32px;height:2px;background:#FF4500}
+.reel-logo-url{font-size:9px;font-weight:600;letter-spacing:0.18em;color:rgba(255,255,255,0.5);text-transform:uppercase}
+.reel-watermark{position:absolute;top:14px;left:16px;z-index:4;font-size:8px;font-weight:900;letter-spacing:-0.04em;color:rgba(255,255,255,0.4)}
+.reel-watermark span{color:#FF4500}
+.reel-counter{position:absolute;top:14px;right:16px;z-index:4;font-size:8px;font-weight:700;letter-spacing:0.1em;color:rgba(255,255,255,0.3)}
+.reel-progress-outer{margin-top:14px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
+.reel-progress-inner{height:100%;background:var(--accent);border-radius:2px;width:0;transition:width 0.1s linear}
+.reel-controls-row{display:flex;align-items:center;gap:10px;margin-top:12px}
+.reel-ctrl-btn{background:var(--dark2);border:1px solid var(--border);color:var(--white);font-family:var(--f);font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:7px 14px;border-radius:6px;cursor:pointer;transition:all 0.15s}
+.reel-ctrl-btn:hover{border-color:var(--accent);color:var(--accent)}
+.reel-time{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:0.04em;margin-left:auto}
+.reel-tl-head{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--white);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.reel-scenes{display:flex;flex-direction:column;gap:10px}
+.reel-scene-card{background:var(--dark1);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:all 0.2s}
+.reel-scene-card:hover{border-color:rgba(255,69,0,0.3)}
+.reel-scene-card.reel-active{border-color:var(--accent);background:rgba(255,69,0,0.05)}
+.reel-thumb{width:34px;height:60px;border-radius:6px;background-size:cover;background-position:center;flex-shrink:0;position:relative;overflow:hidden}
+.reel-thumb::after{content:'';position:absolute;inset:0;background:rgba(10,10,10,0.35)}
+.reel-scene-info{flex:1;min-width:0}
+.reel-scene-tag{font-size:8px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.reel-scene-input{font-size:12px;font-weight:700;color:var(--white);line-height:1.25;background:none;border:none;width:100%;font-family:var(--f);letter-spacing:-0.02em;outline:none;resize:none;padding:0;cursor:text}
+.reel-scene-input:focus{color:#fff}
+.reel-dur{font-size:9px;color:var(--muted);font-weight:600;margin-top:4px;letter-spacing:0.04em}
+.reel-scene-btns{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.reel-sm-btn{background:none;border:1px solid var(--border);color:var(--muted);font-size:8px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:4px 8px;border-radius:4px;cursor:pointer;font-family:var(--f);white-space:nowrap;transition:all 0.15s}
+.reel-sm-btn:hover{border-color:var(--accent);color:var(--accent)}
+.reel-music-box{margin-top:20px;background:var(--dark1);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px}
+.reel-music-icon{font-size:18px;opacity:0.5}
+.reel-music-info{flex:1}
+.reel-music-label{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.reel-music-name{font-size:11px;color:var(--white);font-weight:600}
+.reel-music-btn{background:none;border:1px solid var(--border);color:var(--muted);font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:6px 12px;border-radius:5px;cursor:pointer;font-family:var(--f);transition:all 0.15s;white-space:nowrap}
+.reel-music-btn:hover{border-color:var(--accent);color:var(--accent)}
+.reel-exports{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap}
+.reel-export-btn{background:var(--dark2);border:1px solid var(--border);color:var(--white);font-family:var(--f);font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:10px 20px;border-radius:7px;cursor:pointer;transition:all 0.2s}
+.reel-export-btn:hover{border-color:var(--accent);color:var(--accent)}
+.reel-export-btn.primary{background:var(--accent);border-color:var(--accent)}
+.reel-export-btn.primary:hover{background:var(--accent2)}
 </style>
 </head>
 <body>
@@ -304,16 +361,60 @@ body{font-family:var(--f);background:var(--black);color:var(--white);-webkit-fon
     <div class="dash-tabs">
       <button class="tab-btn active" onclick="showTab('semanal',this)">Semanal</button>
       <button class="tab-btn" onclick="showTab('extra',this)">Banc d'imatges</button>
+      <button class="tab-btn" onclick="showTab('reel',this)">Reel Introductori</button>
     </div>
     <div class="dash-zips">
       <button class="btn-zip" id="zipSemanal" onclick="downloadZip('semanal')">ZIP Semanal</button>
       <button class="btn-zip" id="zipExtra" onclick="downloadZip('extra')" style="display:none">ZIP Extra</button>
+      <button class="btn-zip" id="btnReelWebm" onclick="exportReelWebM()" style="display:none">Export WebM</button>
     </div>
   </div>
 </nav>
 
 <div class="dash-section visible" id="sec-semanal"></div>
 <div class="dash-section" id="sec-extra"></div>
+<div class="dash-section" id="sec-reel">
+  <div class="section-title">Reel Introductori — 15 segons</div>
+  <div class="reel-layout">
+
+    <!-- PREVIEW -->
+    <div class="reel-preview-wrap">
+      <div class="reel-preview" id="reelPreview">
+        <div class="reel-watermark">Hora<span>Punta</span></div>
+        <div class="reel-counter" id="reelCounter">1/6</div>
+        <div id="reelSlides"></div>
+      </div>
+      <div class="reel-progress-outer"><div class="reel-progress-inner" id="reelProgress"></div></div>
+      <div class="reel-controls-row">
+        <button class="reel-ctrl-btn" id="reelPlayBtn" onclick="reelToggle()">▶ Play</button>
+        <button class="reel-ctrl-btn" onclick="reelReset()">↺ Reset</button>
+        <span class="reel-time" id="reelTimeLabel">0.0s / 15s</span>
+      </div>
+      <div class="reel-exports">
+        <button class="reel-export-btn primary" onclick="exportReelWebM()">Export WebM</button>
+        <button class="reel-export-btn" onclick="exportReelFrame()">PNG Frame</button>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div>
+      <div class="reel-tl-head">
+        <span>Timeline — edita els textos</span>
+      </div>
+      <div class="reel-scenes" id="reelSceneList"></div>
+      <div class="reel-music-box">
+        <div class="reel-music-icon">♪</div>
+        <div class="reel-music-info">
+          <div class="reel-music-label">Música</div>
+          <div class="reel-music-name" id="reelMusicName">Cap arxiu seleccionat</div>
+        </div>
+        <button class="reel-music-btn" onclick="loadReelMusic()">Carregar àudio</button>
+        <button class="reel-music-btn" id="reelMusicToggle" onclick="toggleReelMusic()" style="display:none">▶</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -728,8 +829,9 @@ function showTab(id,btn){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('sec-'+id).classList.add('visible');
   btn.classList.add('active');
-  document.getElementById('zipSemanal').style.display = id==='semanal'?'':'none';
-  document.getElementById('zipExtra').style.display   = id==='extra'?'':'none';
+  document.getElementById('zipSemanal').style.display  = id==='semanal'?'':'none';
+  document.getElementById('zipExtra').style.display    = id==='extra'?'':'none';
+  document.getElementById('btnReelWebm').style.display = id==='reel'?'':'none';
 }
 
 /* ─── RENDER SEMANAL ─── */
@@ -976,6 +1078,480 @@ async function downloadZip(section) {
   btn.textContent = section==='semanal' ? 'ZIP Semanal' : 'ZIP Extra';
   btn.disabled = false;
 }
+
+/* ─── REEL DATA ─── */
+const REEL_TOTAL = 11;
+const REEL_SCENES = [
+  { id:'r01',
+    img:'imatges/pexels-nick-gorniok-495871763-35550991.jpg',
+    start:0, end:2.2, overlay:'rgba(10,10,10,0.68)',
+    topText:'El teu barri', mainText:'JA ES\nMOU.', mainAccent:true,
+    pos:'center' },
+  { id:'r02',
+    img:'imatges/pexels-bingqian-li-230971044-30036913.jpg',
+    start:2.2, end:4.4, overlay:'rgba(10,10,10,0.58)',
+    topText:'la pregunta és', mainText:'SI HI\nETS TU.',
+    pos:'bottom' },
+  { id:'r03',
+    img:'imatges/pexels-joaquin-carfagna-3131171-20252172.jpg',
+    start:4.4, end:6.8, overlay:'rgba(10,10,10,0.63)',
+    design:'split',
+    bigA:'CONNECTEM', smallA:'locals.',
+    bigB:'CREEM', smallB:'moviment.',
+    pos:'center' },
+  { id:'r04',
+    img:'imatges/pexels-novillolapeyra-11284639.jpg',
+    start:6.8, end:9, overlay:'rgba(10,10,10,0.70)',
+    topText:'Hora Punta', mainTextMuted:'No és sort.',
+    mainText:'ÉS ESTRATÈGIA.',
+    pos:'bottom' },
+  { id:'r05',
+    img:'imatges/pexels-antonio-garcia-1662060750-28115690.jpg',
+    start:9, end:11, overlay:'rgba(10,10,10,0.84)',
+    isLogo:true, pos:'center' }
+];
+
+/* ─── REEL PLAYER ─── */
+let reelRunning = false;
+let reelStart = null;
+let reelElapsed = 0;
+let reelRAF = null;
+let reelAudio = null;
+
+function buildSlideInner(sc, visible) {
+  const vis = visible ? ' visible' : '';
+  const s = 'font-family:Inter,sans-serif;';
+
+  if (sc.isLogo) {
+    return `<div class="reel-logo-wrap${vis}" id="rtxt-${sc.id}" style="display:flex;flex-direction:column;align-items:center;gap:10px">
+      <div style="${s}font-size:38px;font-weight:900;letter-spacing:-0.06em;color:#fff;line-height:1">HORA</div>
+      <div style="width:40px;height:3px;background:#FF4500"></div>
+      <div style="${s}font-size:38px;font-weight:900;letter-spacing:-0.06em;color:#FF4500;line-height:1">PUNTA</div>
+      <div style="${s}font-size:8px;font-weight:600;letter-spacing:0.22em;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-top:6px">eshorapunta.com</div>
+    </div>`;
+  }
+  if (sc.design === 'split') {
+    return `<div class="reel-main-text${vis}" id="rtxt-${sc.id}" style="text-align:center">
+      <div style="${s}font-size:36px;font-weight:900;letter-spacing:-0.04em;color:#fff;line-height:1" contenteditable="true" data-field="bigA">${sc.bigA}</div>
+      <div style="${s}font-size:16px;font-weight:300;letter-spacing:0.1em;color:rgba(255,255,255,0.5);font-style:italic;margin:5px 0 10px" contenteditable="true" data-field="smallA">${sc.smallA}</div>
+      <div style="width:30px;height:2px;background:#FF4500;margin:0 auto 10px"></div>
+      <div style="${s}font-size:16px;font-weight:300;letter-spacing:0.1em;color:rgba(255,255,255,0.5);font-style:italic;margin-bottom:5px" contenteditable="true" data-field="smallB">${sc.smallB}</div>
+      <div style="${s}font-size:36px;font-weight:900;letter-spacing:-0.04em;color:#FF4500;line-height:1" contenteditable="true" data-field="bigB">${sc.bigB}</div>
+    </div>`;
+  }
+  if (sc.mainTextMuted) {
+    const lines = sc.mainText.split('\n');
+    return `<div class="reel-main-text${vis}" id="rtxt-${sc.id}">
+      ${sc.topText ? `<div style="${s}font-size:9px;font-weight:800;letter-spacing:0.18em;color:#FF4500;text-transform:uppercase;margin-bottom:10px">${sc.topText}</div>` : ''}
+      <div style="${s}font-size:38px;font-weight:900;letter-spacing:-0.04em;color:rgba(255,255,255,0.38);line-height:0.92;margin-bottom:4px" contenteditable="true">${sc.mainTextMuted}</div>
+      <div style="${s}font-size:38px;font-weight:900;letter-spacing:-0.04em;color:#fff;line-height:0.92" contenteditable="true">${lines.join('<br/>')}</div>
+      <div style="width:44px;height:3px;background:#FF4500;margin-top:14px"></div>
+    </div>`;
+  }
+  // default: topText + mainText (mainAccent = last word orange)
+  const lines = sc.mainText.split('\n');
+  const lastLine = lines[lines.length-1];
+  const restLines = lines.slice(0,-1);
+  const lastWords = lastLine.split(' ');
+  const accentWord = sc.mainAccent ? `<span style="color:#FF4500">${lastWords.pop()}</span>` : '';
+  const lastRendered = lastWords.join(' ') + (lastWords.length?' ':'')+accentWord || lastLine;
+  return `<div class="reel-main-text${vis}" id="rtxt-${sc.id}" style="${sc.pos==='center'?'text-align:center':'text-align:left'}">
+    ${sc.topText ? `<div style="${s}font-size:9px;font-weight:800;letter-spacing:0.2em;color:#FF4500;text-transform:uppercase;margin-bottom:10px">${sc.topText}</div>` : ''}
+    <div style="${s}font-size:46px;font-weight:900;letter-spacing:-0.05em;color:#fff;line-height:0.88" contenteditable="true">
+      ${restLines.map(l=>`${l}<br/>`).join('')}${lastRendered}
+    </div>
+    ${sc.pos==='bottom'?`<div style="width:44px;height:3px;background:#FF4500;margin-top:14px"></div>`:''}
+  </div>`;
+}
+
+function reelInit() {
+  const slidesEl = document.getElementById('reelSlides');
+  const listEl   = document.getElementById('reelSceneList');
+  slidesEl.innerHTML = '';
+  listEl.innerHTML   = '';
+
+  REEL_SCENES.forEach((sc, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'reel-slide' + (i===0?' active':'');
+    slide.id = 'rslide-'+sc.id;
+    slide.style.backgroundImage = `url('${sc.img}')`;
+
+    const ov = document.createElement('div');
+    ov.className = 'reel-ov';
+    ov.style.background = sc.overlay;
+
+    const tw = document.createElement('div');
+    tw.className = 'reel-text-wrap ' + sc.pos;
+    tw.innerHTML = buildSlideInner(sc, i===0);
+
+    // sync editable fields back to sc
+    tw.querySelectorAll('[contenteditable]').forEach(el => {
+      el.addEventListener('input', () => {
+        const field = el.dataset.field;
+        if (field) sc[field] = el.textContent;
+        else {
+          if (sc.mainTextMuted && el === tw.querySelectorAll('[contenteditable]')[1]) sc.mainText = el.textContent;
+          else if (sc.mainText !== undefined) sc.mainText = el.innerText;
+        }
+      });
+    });
+
+    slide.appendChild(ov);
+    slide.appendChild(tw);
+    slidesEl.appendChild(slide);
+
+    // Scene card
+    const card = document.createElement('div');
+    card.className = 'reel-scene-card' + (i===0?' reel-active':'');
+    card.id = 'rcard-'+sc.id;
+    card.onclick = () => reelJumpTo(sc.start);
+
+    const thumb = document.createElement('div');
+    thumb.className = 'reel-thumb';
+    thumb.style.backgroundImage = `url('${sc.img}')`;
+
+    const info = document.createElement('div');
+    info.className = 'reel-scene-info';
+    info.innerHTML = `<div class="reel-scene-tag">Escena ${i+1} · ${sc.start}s–${Math.round((sc.end-sc.start)*10)/10}s</div>`;
+
+    if (sc.isLogo) {
+      info.innerHTML += `<div style="font-size:12px;font-weight:900;letter-spacing:-0.03em;color:#fff">HORA<span style="color:#FF4500">PUNTA</span></div>`;
+    } else {
+      const cardText = sc.design==='split'
+        ? `${sc.bigA} ${sc.smallA} / ${sc.bigB} ${sc.smallB}`
+        : (sc.mainTextMuted ? sc.mainTextMuted+' '+sc.mainText : sc.mainText||'');
+      const inp = document.createElement('textarea');
+      inp.className = 'reel-scene-input';
+      inp.rows = 2;
+      inp.value = cardText.replace(/\n/g,' ');
+      info.appendChild(inp);
+    }
+    info.innerHTML += `<div class="reel-dur">${sc.end-sc.start}s</div>`;
+
+    const btns = document.createElement('div');
+    btns.className = 'reel-scene-btns';
+    const swapBtn = document.createElement('button');
+    swapBtn.className = 'reel-sm-btn';
+    swapBtn.textContent = 'Foto';
+    swapBtn.onclick = (e) => {
+      e.stopPropagation();
+      const inp2 = document.createElement('input');
+      inp2.type='file'; inp2.accept='image/*';
+      inp2.onchange = ev => {
+        const url = URL.createObjectURL(ev.target.files[0]);
+        sc.img = url;
+        thumb.style.backgroundImage=`url('${url}')`;
+        const sl = document.getElementById('rslide-'+sc.id);
+        if(sl) sl.style.backgroundImage=`url('${url}')`;
+      };
+      inp2.click();
+    };
+    btns.appendChild(swapBtn);
+    card.appendChild(thumb);
+    card.appendChild(info);
+    card.appendChild(btns);
+    listEl.appendChild(card);
+  });
+}
+
+function reelSwapImg(sc, thumb, idx) {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = e => {
+    const url = URL.createObjectURL(e.target.files[0]);
+    sc.img = url;
+    thumb.style.backgroundImage = `url('${url}')`;
+    const slide = document.getElementById('rslide-'+sc.id);
+    if (slide) slide.style.backgroundImage = `url('${url}')`;
+  };
+  input.click();
+}
+
+function reelJumpTo(t) {
+  reelPause();
+  reelElapsed = t;
+  reelRender(t);
+}
+
+function reelToggle() {
+  reelRunning ? reelPause() : reelPlay();
+}
+
+function reelPlay() {
+  reelRunning = true;
+  reelStart = performance.now() - reelElapsed * 1000;
+  document.getElementById('reelPlayBtn').textContent = '⏸ Pausa';
+  if (reelAudio) { reelAudio.currentTime = reelElapsed; reelAudio.play(); }
+  function loop(now) {
+    if (!reelRunning) return;
+    reelElapsed = Math.min((now - reelStart) / 1000, REEL_TOTAL);
+    reelRender(reelElapsed);
+    if (reelElapsed >= REEL_TOTAL) { reelPause(); reelElapsed = REEL_TOTAL; return; }
+    reelRAF = requestAnimationFrame(loop);
+  }
+  reelRAF = requestAnimationFrame(loop);
+}
+
+function reelPause() {
+  reelRunning = false;
+  if (reelRAF) cancelAnimationFrame(reelRAF);
+  document.getElementById('reelPlayBtn').textContent = '▶ Play';
+  if (reelAudio) reelAudio.pause();
+}
+
+function reelReset() {
+  reelPause();
+  reelElapsed = 0;
+  reelRender(0);
+}
+
+function reelRender(t) {
+  const prog = document.getElementById('reelProgress');
+  const timeLabel = document.getElementById('reelTimeLabel');
+  const counter = document.getElementById('reelCounter');
+  prog.style.width = (t / REEL_TOTAL * 100) + '%';
+  timeLabel.textContent = t.toFixed(1) + 's / ' + REEL_TOTAL + 's';
+
+  let activeIdx = REEL_SCENES.length - 1;
+  REEL_SCENES.forEach((sc, i) => { if (t >= sc.start && t < sc.end) activeIdx = i; });
+  counter.textContent = (activeIdx+1) + '/' + REEL_SCENES.length;
+
+  REEL_SCENES.forEach((sc, i) => {
+    const slide = document.getElementById('rslide-'+sc.id);
+    const txt   = document.getElementById('rtxt-'+sc.id);
+    const card  = document.getElementById('rcard-'+sc.id);
+    const isActive = i === activeIdx;
+    if (slide) { slide.classList.toggle('active', isActive); if(isActive) slide.classList.add('zoom'); else slide.classList.remove('zoom'); }
+    if (txt) txt.classList.toggle('visible', isActive);
+    if (card) card.classList.toggle('reel-active', isActive);
+  });
+}
+
+/* ─── REEL MUSIC ─── */
+function loadReelMusic() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'audio/*';
+  input.onchange = e => {
+    if (reelAudio) { reelAudio.pause(); reelAudio = null; }
+    const url = URL.createObjectURL(e.target.files[0]);
+    reelAudio = new Audio(url);
+    reelAudio.loop = false;
+    document.getElementById('reelMusicName').textContent = e.target.files[0].name;
+    document.getElementById('reelMusicToggle').style.display = '';
+    document.getElementById('reelMusicToggle').textContent = '▶';
+  };
+  input.click();
+}
+
+function toggleReelMusic() {
+  if (!reelAudio) return;
+  const btn = document.getElementById('reelMusicToggle');
+  if (reelAudio.paused) { reelAudio.play(); btn.textContent = '⏸'; }
+  else { reelAudio.pause(); btn.textContent = '▶'; }
+}
+
+/* ─── REEL EXPORT FRAME PNG ─── */
+async function exportReelFrame() {
+  const preview = document.getElementById('reelPreview');
+  showToast('Capturant frame...');
+  try {
+    const canvas = await html2canvas(preview, {
+      scale:4, useCORS:false, allowTaint:true,
+      backgroundColor:'#0a0a0a', logging:false, imageTimeout:0,
+      width:preview.offsetWidth, height:preview.offsetHeight
+    });
+    const blob = await new Promise(r => canvas.toBlob(b=>r(b||null),'image/png'));
+    if (blob) { saveAs(blob, 'horapunta-reel-frame.png'); showToast('Frame exportat!'); }
+    else showToast('Error: usa Live Server');
+  } catch(e) { showToast('Error en la captura'); }
+}
+
+/* ─── REEL EXPORT WEBM ─── */
+function drawWrappedText(ctx, text, x, y, maxW, lineH) {
+  const words = text.split(' ');
+  let line = '', lines = [];
+  for (const w of words) {
+    const test = line ? line+' '+w : w;
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  lines.forEach((l,i) => ctx.fillText(l, x, y + i*lineH));
+  return lines.length;
+}
+
+async function exportReelWebM() {
+  showToast('Preparant WebM... pot trigar ~30s');
+  const btn = document.getElementById('btnReelWebm');
+  btn.textContent = 'Generant...'; btn.disabled = true;
+
+  const W = 1080, H = 1920, FPS = 30;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const imgs = {};
+  await Promise.all(REEL_SCENES.map(sc => new Promise(res => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => { imgs[sc.id] = img; res(); };
+    img.onerror = () => res();
+    img.src = sc.img;
+  })));
+
+  const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+    ? 'video/webm;codecs=vp9' : 'video/webm';
+  const stream = canvas.captureStream(FPS);
+  const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 10000000 });
+  const chunks = [];
+  recorder.ondataavailable = e => { if (e.data.size>0) chunks.push(e.data); };
+  recorder.start(200);
+
+  const totalFrames = Math.ceil(REEL_TOTAL * FPS);
+  for (let f = 0; f <= totalFrames; f++) {
+    const t = f / FPS;
+    let sc = REEL_SCENES[REEL_SCENES.length-1];
+    for (const s of REEL_SCENES) { if (t >= s.start && t < s.end) { sc = s; break; } }
+    const progress = Math.min((t-sc.start)/(sc.end-sc.start), 1);
+    const dur = sc.end - sc.start;
+    const st = t - sc.start;
+    let alpha = Math.min(st/0.35, 1, (dur-st)/0.35);
+    alpha = Math.max(0, alpha);
+
+    // BG
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, W, H);
+    if (imgs[sc.id]) {
+      const im = imgs[sc.id];
+      const scl = 1 + progress*0.04;
+      const r = Math.max(W/im.width, H/im.height)*scl;
+      ctx.drawImage(im, (W-im.width*r)/2, (H-im.height*r)/2, im.width*r, im.height*r);
+    }
+    ctx.fillStyle = sc.overlay;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.textBaseline = 'top';
+
+    if (sc.isLogo) {
+      ctx.textAlign = 'center';
+      ctx.font = `900 ${H*0.075}px Inter,sans-serif`;
+      ctx.fillStyle = '#fff';
+      ctx.fillText('HORA', W/2, H*0.44);
+      ctx.fillStyle = '#FF4500';
+      ctx.fillRect(W/2-48, H*0.513, 96, 4);
+      ctx.fillStyle = '#FF4500';
+      ctx.font = `900 ${H*0.075}px Inter,sans-serif`;
+      ctx.fillText('PUNTA', W/2, H*0.525);
+      ctx.fillStyle = 'rgba(255,255,255,0.38)';
+      ctx.font = `600 ${H*0.018}px Inter,sans-serif`;
+      ctx.fillText('ESHORAPUNTA.COM', W/2, H*0.61);
+
+    } else if (sc.design === 'split') {
+      ctx.textAlign = 'center';
+      const fBig = H*0.078, fSmall = H*0.032;
+      ctx.font = `900 ${fBig}px Inter,sans-serif`;
+      ctx.fillStyle = '#fff';
+      ctx.fillText(sc.bigA, W/2, H*0.415);
+      ctx.font = `300 ${fSmall}px Inter,sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.fillText(sc.smallA, W/2, H*0.415+fBig*1.05);
+      ctx.fillStyle = '#FF4500';
+      ctx.fillRect(W/2-36, H*0.415+fBig*1.05+fSmall*1.3, 72, 3);
+      ctx.font = `300 ${fSmall}px Inter,sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.fillText(sc.smallB, W/2, H*0.415+fBig*1.05+fSmall*1.3+10);
+      ctx.font = `900 ${fBig}px Inter,sans-serif`;
+      ctx.fillStyle = '#FF4500';
+      ctx.fillText(sc.bigB, W/2, H*0.415+fBig*1.05+fSmall*2.8+10);
+
+    } else if (sc.mainTextMuted) {
+      const yBase = H*0.78;
+      ctx.textAlign = 'left';
+      if (sc.topText) {
+        ctx.font = `800 ${H*0.018}px Inter,sans-serif`;
+        ctx.fillStyle = '#FF4500';
+        ctx.fillText(sc.topText.toUpperCase(), W*0.082, yBase - H*0.22);
+      }
+      ctx.font = `900 ${H*0.076}px Inter,sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      drawWrappedText(ctx, sc.mainTextMuted, W*0.082, yBase-H*0.165, W*0.84, H*0.085);
+      ctx.fillStyle = '#fff';
+      const n = drawWrappedText(ctx, sc.mainText, W*0.082, yBase-H*0.075, W*0.84, H*0.085);
+      ctx.fillStyle = '#FF4500';
+      ctx.fillRect(W*0.082, yBase-H*0.075+n*H*0.09+10, 52, 4);
+
+    } else {
+      const yBase = sc.pos==='bottom' ? H*0.75 : H*0.44;
+      if (sc.topText) {
+        ctx.textAlign = sc.pos==='center' ? 'center' : 'left';
+        ctx.font = `800 ${H*0.018}px Inter,sans-serif`;
+        ctx.fillStyle = '#FF4500';
+        ctx.fillText(sc.topText.toUpperCase(), sc.pos==='center'?W/2:W*0.082, yBase-H*0.175);
+      }
+      ctx.font = `900 ${H*0.095}px Inter,sans-serif`;
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = sc.pos==='center' ? 'center' : 'left';
+      const xPos = sc.pos==='center' ? W/2 : W*0.082;
+      const lines2 = sc.mainText.split('\n');
+      lines2.forEach((line,li) => {
+        const words2 = line.split(' ');
+        if (sc.mainAccent && li===lines2.length-1) {
+          const last = words2.pop();
+          const rest = words2.join(' ')+(words2.length?' ':'');
+          ctx.fillStyle='#fff';
+          const rw = rest ? ctx.measureText(rest).width : 0;
+          if (sc.pos==='center') {
+            const full = rest+last;
+            const fw = ctx.measureText(full).width;
+            ctx.fillText(rest, xPos - ctx.measureText(last).width/2, yBase+li*H*0.105);
+            ctx.fillStyle='#FF4500';
+            ctx.fillText(last, xPos + (fw/2 - ctx.measureText(last).width), yBase+li*H*0.105);
+          } else {
+            ctx.fillText(rest, xPos, yBase+li*H*0.105);
+            ctx.fillStyle='#FF4500';
+            ctx.fillText(last, xPos+rw, yBase+li*H*0.105);
+          }
+        } else {
+          ctx.fillStyle='#fff';
+          ctx.fillText(line, xPos, yBase+li*H*0.105);
+        }
+      });
+      if (sc.pos==='bottom') {
+        ctx.fillStyle='#FF4500';
+        ctx.fillRect(W*0.082, yBase+lines2.length*H*0.105+14, 52, 4);
+      }
+    }
+    ctx.restore();
+
+    // watermark
+    ctx.save(); ctx.globalAlpha=0.35;
+    ctx.font=`900 ${H*0.016}px Inter,sans-serif`;
+    ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillStyle='#fff'; ctx.fillText('Hora', W*0.055, H*0.022);
+    ctx.fillStyle='#FF4500';
+    ctx.fillText('Punta', W*0.055+ctx.measureText('Hora').width+2, H*0.022);
+    ctx.restore();
+
+    if (f % 10 === 0) await new Promise(r => setTimeout(r, 0));
+  }
+
+  recorder.stop();
+  await new Promise(r => {
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, {type:'video/webm'});
+      saveAs(blob, 'horapunta-reel.webm');
+      showToast('WebM exportat! Converteix a MP4 amb handbrake.fr');
+      btn.textContent = 'Export WebM'; btn.disabled = false;
+      r();
+    };
+  });
+}
+
+/* ─── INIT REEL ─── */
+reelInit();
+reelRender(0);
 </script>
 </body>
 </html>
