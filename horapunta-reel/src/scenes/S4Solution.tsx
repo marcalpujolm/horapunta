@@ -103,9 +103,11 @@ export const S4Solution: React.FC = () => {
             const sp = spring({ frame: f - b.start, fps, config: SPRING_SNAP, durationInFrames: 36 });
             const op = interpolate(f, [b.start, b.start + 10], [0, 1], cl);
 
-            // Crash up from bottom with overshoot
-            const ty = interpolate(sp, [0, 0.55, 0.78, 1], [380, -24, 8, 0]);
-            const sc = interpolate(sp, [0, 0.6, 0.82, 1], [0.62, 1.12, 0.96, 1]);
+            // Crash up from bottom with overshoot + 3D tilt
+            const ty   = interpolate(sp, [0, 0.55, 0.78, 1], [380, -24, 8, 0]);
+            const sc   = interpolate(sp, [0, 0.6, 0.82, 1], [0.62, 1.12, 0.96, 1]);
+            // Cada bloc entra amb un angle 3D diferent (esquerra tilt, centre frontal, dreta tilt oposat)
+            const rotY = interpolate(sp, [0, 0.65, 1], [(i - 1) * -22, (i - 1) * 4, 0]);
 
             // Hard color flash on impact
             const flashOp = interpolate(f, [b.start + 7, b.start + 9, b.start + 22], [0, 0.6, 0], cl);
@@ -118,7 +120,7 @@ export const S4Solution: React.FC = () => {
               <div key={i} style={{
                 flex: 1, position: "relative",
                 opacity: op,
-                transform: `translateY(${ty}px) scale(${sc})`,
+                transform: `perspective(900px) translateY(${ty}px) rotateY(${rotY}deg) scale(${sc})`,
               }}>
 
                 {/* Flash overlay */}

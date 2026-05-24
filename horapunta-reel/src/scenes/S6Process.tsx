@@ -60,13 +60,16 @@ export const S6Process: React.FC = () => {
           const sp = spring({ frame: f - starts[i], fps, config: SPRING_SNAP, durationInFrames: 38 });
           const op = interpolate(f, [starts[i], starts[i] + 10], [0, 1], cl);
 
-          // Slam from left or right with overshoot
+          // Slam from left or right with overshoot + 3D rotateY
           const tx = interpolate(sp, [0, 0.6, 0.82, 1],
             step.dir === "left"
               ? [-600, 24, -8, 0]
               : [600, -24, 8, 0]
           );
-          const sc = interpolate(sp, [0, 0.65, 1], [0.9, 1.05, 1]);
+          const sc    = interpolate(sp, [0, 0.65, 1], [0.9, 1.05, 1]);
+          const rotY  = interpolate(sp, [0, 0.55, 1],
+            step.dir === "left" ? [-18, 4, 0] : [18, -4, 0]
+          );
 
           // Hard flash on impact
           const flashOp = interpolate(f, [starts[i] + 6, starts[i] + 8, starts[i] + 20], [0, 0.6, 0], cl);
@@ -78,7 +81,7 @@ export const S6Process: React.FC = () => {
             <div key={i} style={{
               position: "relative",
               opacity: op,
-              transform: `translateX(${tx}px) scale(${sc})`,
+              transform: `perspective(1200px) translateX(${tx}px) rotateY(${rotY}deg) scale(${sc})`,
               overflow: "hidden",
             }}>
 

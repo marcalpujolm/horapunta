@@ -5,7 +5,7 @@ import { cl } from "../brand";
 // ─── SplitText — anima cada lletra individualment ────────────────────────────
 // animType: "fall" | "rise" | "scale" | "spinY" | "left" | "right" | "bounce" | "chaos"
 
-export type AnimType = "fall" | "rise" | "scale" | "spinY" | "left" | "right" | "bounce" | "chaos";
+export type AnimType = "fall" | "rise" | "scale" | "spinY" | "left" | "right" | "bounce" | "chaos" | "flip3d" | "zDive";
 
 interface SplitTextProps {
   text: string;
@@ -99,6 +99,21 @@ export const SplitText: React.FC<SplitTextProps> = ({
             const rot = interpolate(sp, [0, 0.5, 1], [alt * 45, alt * -8, 0]);
             const sc  = interpolate(sp, [0, 0.65, 1], [0, 1.15, 1]);
             transform = `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${sc})`;
+            break;
+          }
+          case "flip3d": {
+            // Backflip des de -90deg rotateX en perspectiva 3D
+            const rotX = interpolate(sp, [0, 1], [-90, 0]);
+            const sc   = interpolate(sp, [0, 0.7, 1], [0.7, 1.12, 1]);
+            transform = `perspective(500px) rotateX(${rotX}deg) scale(${sc})`;
+            break;
+          }
+          case "zDive": {
+            // Entra des de lluny (Z negatiu gran) cap a la càmera, amb un petit gir
+            const z   = interpolate(sp, [0, 1], [-600, 0]);
+            const sc  = interpolate(sp, [0, 1], [0.1, 1]);
+            const rot = interpolate(sp, [0, 0.5, 1], [alt * 20, alt * -3, 0]);
+            transform = `perspective(700px) translateZ(${z}px) scale(${sc}) rotate(${rot}deg)`;
             break;
           }
         }
