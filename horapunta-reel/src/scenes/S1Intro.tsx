@@ -119,7 +119,7 @@ export const S1Intro: React.FC = () => {
             color: "rgba(255,255,255,0.6)",
             letterSpacing: "0.14em", textTransform: "uppercase", textAlign: "center",
           }}>
-            Consultoria de màrqueting físic
+            Consultoria de màrqueting i comunicació
           </div>
         </div>
 

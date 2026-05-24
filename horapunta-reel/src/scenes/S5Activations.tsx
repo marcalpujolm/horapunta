@@ -25,7 +25,7 @@ export const S5Activations: React.FC = () => {
   const tRotY = interpolate(tSp, [0, 1], [-90, 0]);
   const tOp   = interpolate(f, [4, 22], [0, 1], cl);
 
-  const starts = [46, 106, 166, 226];
+  const starts = [28, 68, 108, 148];
 
   return (
     <AbsoluteFill style={{ background: "#0A0A0A", opacity: Math.min(fadeIn, fadeOut), overflow: "hidden" }}>
@@ -40,7 +40,7 @@ export const S5Activations: React.FC = () => {
       <AbsoluteFill style={{
         display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
-        padding: "0 52px", gap: 20,
+        padding: "0 28px", gap: 16,
       }}>
 
         {/* Title */}
@@ -49,14 +49,14 @@ export const S5Activations: React.FC = () => {
           transform: `perspective(1000px) rotateY(${tRotY}deg)`,
           textAlign: "center", marginBottom: 4,
         }}>
-          <div style={{ fontFamily, fontSize: 24, fontWeight: 800, color: RED, letterSpacing: "0.18em", textTransform: "uppercase" }}>
-            Coses que fem. De veritat.
+          <div style={{ fontFamily, fontSize: 32, fontWeight: 900, color: RED, letterSpacing: "0.16em", textTransform: "uppercase" }}>
+            Coses que fem
           </div>
           <div style={{ width: 60, height: 4, background: RED, borderRadius: 2, margin: "10px auto 0" }} />
         </div>
 
         {/* Cards — 2×2 */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, width: "100%" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, width: "100%" }}>
           {CARDS.map((card, i) => {
             const sp   = spring({ frame: f - starts[i], fps, config: SPRING, durationInFrames: 52 });
             const op   = interpolate(f, [starts[i], starts[i] + 16], [0, 1], cl);
@@ -76,9 +76,9 @@ export const S5Activations: React.FC = () => {
                 transformOrigin: "center center",
                 background: card.bg,
                 border: card.bg === "#111111" ? `1px solid rgba(255,255,255,0.08)` : "none",
-                borderBottom: `5px solid ${card.accent}`,
-                borderRadius: 8,
-                padding: "20px 18px",
+                borderBottom: `6px solid ${card.accent}`,
+                borderRadius: 10,
+                padding: "26px 22px",
                 boxShadow: card.bg === RED ? `0 0 30px ${RED}77` : card.bg === WHITE ? "0 6px 28px rgba(0,0,0,0.4)" : "none",
               }}>
                 {/* Number */}
@@ -92,9 +92,9 @@ export const S5Activations: React.FC = () => {
 
                 {/* Title */}
                 <div style={{
-                  fontFamily, fontSize: 26, fontWeight: 900,
+                  fontFamily, fontSize: 34, fontWeight: 900,
                   color: card.fg, letterSpacing: "-0.04em",
-                  lineHeight: 1.1, marginBottom: 14,
+                  lineHeight: 1.05, marginBottom: 14,
                   whiteSpace: "pre-line",
                 }}>
                   {card.title}
@@ -106,7 +106,7 @@ export const S5Activations: React.FC = () => {
                     const tagStart = starts[i] + 28 + ti * 8;
                     return (
                       <span key={ti} style={{
-                        fontFamily, fontSize: 12, fontWeight: 800,
+                        fontFamily, fontSize: 14, fontWeight: 800,
                         color: card.bg === WHITE ? RED : card.accent,
                         background: card.bg === WHITE
                           ? "rgba(232,64,28,0.1)"
