@@ -88,7 +88,7 @@ export const S7CTA: React.FC = () => {
             Comença a
           </div>
           <div style={{ fontFamily, fontSize: 92, fontWeight: 900, color: RED, letterSpacing: "-0.055em", lineHeight: 0.95 }}>
-            omplir taules.
+            potenciar el local.
           </div>
         </div>
 

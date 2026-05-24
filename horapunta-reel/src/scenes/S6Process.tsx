@@ -10,7 +10,7 @@ const STEPS = [
   { num: 1, title: "DIAGNOSI",    sub: "Setmana 1",   bg: RED,   fg: WHITE, dir: "left"  as const },
   { num: 2, title: "PLA D'ACCIÓ", sub: "Setmana 2",   bg: WHITE, fg: BLACK, dir: "right" as const },
   { num: 3, title: "EXECUCIÓ",    sub: "Setmana 3–6", bg: RED,   fg: WHITE, dir: "left"  as const },
-  { num: 4, title: "ITERACIÓ",    sub: "Mes 2+",      bg: WHITE, fg: BLACK, dir: "right" as const },
+  { num: 4, title: "ITERACIÓ\nI ESCALA",    sub: "Mes 2+",      bg: WHITE, fg: BLACK, dir: "right" as const },
 ] as const;
 
 export const S6Process: React.FC = () => {

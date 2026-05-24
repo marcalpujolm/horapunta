@@ -35,16 +35,16 @@ const Grain: React.FC = () => {
   );
 };
 
-// ─── Timeline — ~54s = 1662f @ 30fps ─────────────────────────────────────────
+// ─── Timeline — ~51s = 1550f @ 30fps ─────────────────────────────────────────
 //
 //  S1  Intro          0  → 195   (0s   – 6.5s)
 //  S2  Problem       180 → 420   (6s   – 14s)     15f overlap
 //  S3  Quote         410 → 540   (13.7s – 18s)    10f overlap
-//  S4  Solution      530 → 770   (17.7s – 25.7s)  10f overlap  ← shorter!
-//  S5  Activations   755 →1128   (25.2s – 37.6s)  15f overlap
-//  S6  Process      1113 →1418   (37.1s – 47.3s)  15f overlap
-//  S7  CTA          1403 →1588   (46.8s – 52.9s)  15f overlap
-//  S8  Sign Off     1573 →1653   (52.4s – 55.1s)  15f overlap
+//  S4  Solution      530 → 770   (17.7s – 25.7s)  10f overlap
+//  S5  Activations   755 →1025   (25.2s – 34.2s)  ← shorter!
+//  S6  Process      1010 →1315   (33.7s – 43.8s)  15f overlap
+//  S7  CTA          1300 →1485   (43.3s – 49.5s)  15f overlap
+//  S8  Sign Off     1470 →1550   (49s   – 51.7s)  15f overlap
 
 export const HoraPuntaPromo: React.FC = () => (
   <AbsoluteFill style={{ background: "#000000" }}>
@@ -52,10 +52,10 @@ export const HoraPuntaPromo: React.FC = () => (
     <Sequence from={180}  durationInFrames={240}><S2Problem /></Sequence>
     <Sequence from={410}  durationInFrames={130}><S3Quote /></Sequence>
     <Sequence from={530}  durationInFrames={240}><S4Solution /></Sequence>
-    <Sequence from={755}  durationInFrames={373}><S5Activations /></Sequence>
-    <Sequence from={1113} durationInFrames={305}><S6Process /></Sequence>
-    <Sequence from={1403} durationInFrames={185}><S7CTA /></Sequence>
-    <Sequence from={1573} durationInFrames={80}><S8Signoff /></Sequence>
+    <Sequence from={755}  durationInFrames={270}><S5Activations /></Sequence>
+    <Sequence from={1010} durationInFrames={305}><S6Process /></Sequence>
+    <Sequence from={1300} durationInFrames={185}><S7CTA /></Sequence>
+    <Sequence from={1470} durationInFrames={80}><S8Signoff /></Sequence>
 
     {/* Post-FX — always on top */}
     <Vignette />

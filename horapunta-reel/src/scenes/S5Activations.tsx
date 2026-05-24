@@ -18,7 +18,7 @@ export const S5Activations: React.FC = () => {
   const { fps } = useVideoConfig();
 
   const fadeIn  = interpolate(f, [0, 14], [0, 1], cl);
-  const fadeOut = interpolate(f, [348, 370], [1, 0], cl);
+  const fadeOut = interpolate(f, [245, 265], [1, 0], cl);
 
   // Title Y-spin
   const tSp = spring({ frame: f - 4, fps, config: SPRING_SNAP, durationInFrames: 42 });
