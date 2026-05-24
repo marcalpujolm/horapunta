@@ -1,96 +1,75 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
-import { fontFamily, BLACK, WHITE, RED, SPRING, cl } from "../brand";
+import { fontFamily, BLACK, WHITE, RED, SPRING, SPRING_SNAP, cl } from "../brand";
 
-// ─── Scene 8: Sign Off — 0-62f ──────────────────────────────────────────────
-// Everything fades to just the logo. Red heartbeat dot. Cut to black.
+// ─── Scene 8: Sign Off — IMPACTFUL CLOSE ────────────────────────────────────
+// Big logo springs in. Tagline punches up. Heartbeat double-beat.
+// White flash → cut to black.
 
 export const S8Signoff: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const fadeIn = interpolate(f, [0, 18], [0, 1], cl);
+  const fadeIn = interpolate(f, [0, 16], [0, 1], cl);
 
-  // Logo spring in
-  const logoSp = spring({ frame: f - 16, fps, config: SPRING, durationInFrames: 40 });
-  const logoScale = 0.7 + logoSp * 0.3;
-  const logoOp = interpolate(f, [16, 30], [0, 1], cl);
+  // Logo spring
+  const logoSp = spring({ frame: f - 14, fps, config: SPRING_SNAP, durationInFrames: 44 });
+  const logoSc = interpolate(logoSp, [0, 0.7, 1], [0.3, 1.1, 1]);
+  const logoOp = interpolate(f, [14, 26], [0, 1], cl);
 
-  // Tagline
-  const tagOp = interpolate(f, [35, 50], [0, 1], cl);
+  // Tagline punch up
+  const tagSp = spring({ frame: f - 38, fps, config: SPRING, durationInFrames: 36 });
+  const tagY  = interpolate(tagSp, [0, 1], [30, 0]);
+  const tagOp = interpolate(f, [38, 50], [0, 1], cl);
 
-  // Red dot heartbeat (2 quick pulses)
-  const beat1 = spring({ frame: f - 44, fps, config: { damping: 6, stiffness: 500, mass: 0.3 }, durationInFrames: 14 });
-  const beat2 = spring({ frame: f - 52, fps, config: { damping: 6, stiffness: 500, mass: 0.3 }, durationInFrames: 14 });
-  const dotScale = 1 + beat1 * 0.6 + beat2 * 0.4;
+  // Heartbeat: dub-DUB (two pulses)
+  const beat1 = spring({ frame: f - 48, fps, config: { damping: 5, stiffness: 600, mass: 0.25 }, durationInFrames: 14 });
+  const beat2 = spring({ frame: f - 56, fps, config: { damping: 5, stiffness: 600, mass: 0.25 }, durationInFrames: 14 });
+  const dotSc  = 1 + beat1 * 0.8 + beat2 * 1.2;
+  const dotGlow = (beat1 + beat2) * 0.5;
 
-  // Cut to black at very end
-  const cutOut = interpolate(f, [58, 62], [1, 0], cl);
+  // Final white flash → cut to black
+  const flashOut = interpolate(f, [66, 68, 70, 75], [0, 1, 0.4, 0], cl);
+  const cutBlack = interpolate(f, [73, 80], [0, 1], cl);
 
   return (
-    <AbsoluteFill
-      style={{
-        background: BLACK,
-        opacity: fadeIn * cutOut,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 20,
-      }}
-    >
-      {/* HORA PUNTA logo */}
-      <div
-        style={{
-          opacity: logoOp,
-          transform: `scale(${logoScale})`,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ fontFamily, fontSize: 112, fontWeight: 900, color: WHITE, letterSpacing: "-0.06em", lineHeight: 0.88, textTransform: "uppercase" }}>
+    <AbsoluteFill style={{
+      background: BLACK,
+      opacity: fadeIn,
+      display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center", gap: 18,
+    }}>
+
+      {/* White flash */}
+      <AbsoluteFill style={{ background: WHITE, opacity: flashOut, pointerEvents: "none" }} />
+      {/* Cut to black */}
+      <AbsoluteFill style={{ background: BLACK, opacity: cutBlack, pointerEvents: "none" }} />
+
+      {/* Logo */}
+      <div style={{ opacity: logoOp, transform: `scale(${logoSc})`, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ fontFamily, fontSize: 130, fontWeight: 900, color: WHITE, letterSpacing: "-0.065em", lineHeight: 0.86, textTransform: "uppercase" }}>
           HORA
         </div>
-        <div style={{ width: 72, height: 4, background: RED, margin: "16px 0", borderRadius: 2 }} />
-        <div style={{ fontFamily, fontSize: 112, fontWeight: 900, color: RED, letterSpacing: "-0.06em", lineHeight: 0.88, textTransform: "uppercase" }}>
+        <div style={{ width: 90, height: 6, background: RED, margin: "18px 0", borderRadius: 3, boxShadow: `0 0 20px ${RED}` }} />
+        <div style={{ fontFamily, fontSize: 130, fontWeight: 900, color: RED, letterSpacing: "-0.065em", lineHeight: 0.86, textTransform: "uppercase" }}>
           PUNTA
         </div>
       </div>
 
       {/* Tagline */}
-      <div
-        style={{
-          opacity: tagOp,
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            fontFamily,
-            fontSize: 24,
-            fontWeight: 500,
-            color: "rgba(255,255,255,0.42)",
-            letterSpacing: "0.06em",
-          }}
-        >
+      <div style={{ opacity: tagOp, transform: `translateY(${tagY}px)`, textAlign: "center" }}>
+        <div style={{ fontFamily, fontSize: 26, fontWeight: 700, color: "rgba(255,255,255,0.45)", letterSpacing: "0.05em" }}>
           No gestionem xarxes. Activem negocis.
         </div>
       </div>
 
-      {/* Red heartbeat dot */}
-      <div
-        style={{
-          marginTop: 12,
-          width: 14,
-          height: 14,
-          borderRadius: "50%",
-          background: RED,
-          transform: `scale(${dotScale})`,
-          boxShadow: `0 0 ${dotScale * 12}px rgba(232,64,28,0.7)`,
-          opacity: interpolate(f, [44, 56], [0, 1], cl),
-        }}
-      />
+      {/* Heartbeat dot */}
+      <div style={{
+        width: 18, height: 18, borderRadius: "50%", background: RED,
+        transform: `scale(${dotSc})`,
+        boxShadow: `0 0 ${12 + dotGlow * 40}px ${RED}, 0 0 ${24 + dotGlow * 60}px ${RED}66`,
+        opacity: interpolate(f, [46, 58], [0, 1], cl),
+      }} />
     </AbsoluteFill>
   );
 };

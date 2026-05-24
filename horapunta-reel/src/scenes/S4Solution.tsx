@@ -1,182 +1,133 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
-import { fontFamily, BLACK, WHITE, RED, SPRING, cl } from "../brand";
+import { fontFamily, BLACK, WHITE, RED, SPRING, SPRING_SNAP, cl } from "../brand";
 
-// ─── Scene 4: The Solution — 0-370f ─────────────────────────────────────────
-// Perspective flip entrance. Title + 3 solution blocks from 3 directions.
-// Blocks float while idle.
+// ─── Scene 4: The Solution — 3 DISTINCT COLOR BLOCKS ────────────────────────
+// Block 1: RED bg / white text — slides from left
+// Block 2: WHITE bg / black text — drops from top
+// Block 3: BLACK bg / red border glow — slides from right
+// Each block has its own burst of particles on arrival.
 
 const BLOCKS = [
-  {
-    icon: "⚡",
-    title: "ACTIVACIONS FÍSIQUES",
-    body: "Events i experiències que porten gent real.",
-    dir: "left" as const,
-    start: 60,
-  },
-  {
-    icon: "🔗",
-    title: "CONNEXIÓ AMB COMUNITATS",
-    body: "El teu local, punt de trobada.",
-    dir: "top" as const,
-    start: 90,
-  },
-  {
-    icon: "🧠",
-    title: "ESTRATÈGIA I EXECUCIÓ",
-    body: "Dissenyem, executem, estarem allà.",
-    dir: "right" as const,
-    start: 120,
-  },
+  { icon: "⚡", title: "ACTIVACIONS\nFÍSIQUES", body: "Events i experiències\nque porten gent real.", bg: RED, fg: WHITE, accent: WHITE, dir: "left" as const, start: 50 },
+  { icon: "🔗", title: "CONNEXIÓ AMB\nCOMUNITATS",  body: "El teu local,\npunt de trobada.", bg: WHITE, fg: BLACK, accent: RED, dir: "top"  as const, start: 82 },
+  { icon: "🧠", title: "ESTRATÈGIA\nI EXECUCIÓ",  body: "Dissenyem, executem,\nestarem allà.", bg: BLACK, fg: WHITE, accent: RED, dir: "right" as const, start: 114 },
 ] as const;
 
-const SolutionBlock: React.FC<{
-  icon: string;
-  title: string;
-  body: string;
-  dir: "left" | "top" | "right";
-  startF: number;
-  f: number;
-  fps: number;
-  index: number;
-}> = ({ icon, title, body, dir, startF, f, fps, index }) => {
-  const sp = spring({ frame: f - startF, fps, config: SPRING, durationInFrames: 50 });
-  const opacity = interpolate(f, [startF, startF + 18], [0, 1], cl);
-
-  const tx = dir === "left" ? interpolate(sp, [0, 1], [-180, 0]) : dir === "right" ? interpolate(sp, [0, 1], [180, 0]) : 0;
-  const ty = dir === "top" ? interpolate(sp, [0, 1], [-140, 0]) : 0;
-
-  // Idle float
-  const floatY = Math.sin((f - startF) * 0.038 + index * 2.1) * 5;
-  const floatR = Math.sin((f - startF) * 0.028 + index * 1.5) * 0.8;
-
-  return (
-    <div
-      style={{
-        opacity,
-        transform: `translate(${tx}px, ${ty + floatY}px) rotate(${floatR}deg)`,
-        flex: 1,
-        background: "#0A0A0A",
-        border: "1px solid rgba(255,255,255,0.08)",
-        borderTop: `4px solid ${RED}`,
-        borderRadius: 8,
-        padding: "28px 24px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 14,
-        minHeight: 200,
-      }}
-    >
-      <div style={{ fontSize: 40, lineHeight: 1 }}>{icon}</div>
-      <div
-        style={{
-          fontFamily,
-          fontSize: 26,
-          fontWeight: 900,
-          color: WHITE,
-          letterSpacing: "-0.03em",
-          lineHeight: 1.15,
-        }}
-      >
-        {title}
-      </div>
-      <div
-        style={{
-          fontFamily,
-          fontSize: 20,
-          fontWeight: 400,
-          color: "rgba(255,255,255,0.55)",
-          lineHeight: 1.4,
-        }}
-      >
-        {body}
-      </div>
-    </div>
-  );
-};
+// Particles for block arrival
+const BLOCK_DOTS = Array.from({ length: 10 }, (_, i) => ({
+  angle: (i / 10) * Math.PI * 2,
+  r: 50 + i * 12,
+}));
 
 export const S4Solution: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Perspective flip entrance: scene flips in from rotateY 90→0 in first 28f
-  const flipSp = spring({ frame: f - 0, fps, config: { damping: 14, stiffness: 120, mass: 0.9 }, durationInFrames: 40 });
-  const rotY = interpolate(flipSp, [0, 1], [-90, 0]);
-  const fadeIn = interpolate(f, [0, 22], [0, 1], cl);
+  const fadeIn  = interpolate(f, [0, 18], [0, 1], cl);
   const fadeOut = interpolate(f, [348, 370], [1, 0], cl);
-  const opacity = Math.min(fadeIn, fadeOut);
 
-  // Title slides in from top
-  const titleSp = spring({ frame: f - 20, fps, config: SPRING, durationInFrames: 40 });
-  const titleY = interpolate(titleSp, [0, 1], [-80, 0]);
+  // Title punch-in
+  const tSp = spring({ frame: f - 12, fps, config: SPRING_SNAP, durationInFrames: 42 });
+  const tY  = interpolate(tSp, [0, 1], [-80, 0]);
+  const tSc = interpolate(tSp, [0, 0.75, 1], [1.4, 0.9, 1]);
 
   return (
-    <AbsoluteFill
-      style={{
-        background: BLACK,
-        opacity,
-        perspective: "1600px",
-      }}
-    >
-      <AbsoluteFill
-        style={{
-          transform: `rotateY(${rotY}deg)`,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "0 56px",
-          gap: 36,
-        }}
-      >
+    <AbsoluteFill style={{ background: BLACK, opacity: Math.min(fadeIn, fadeOut), overflow: "hidden" }}>
+
+      {/* Diagonal grid decoration */}
+      <AbsoluteFill style={{ pointerEvents: "none" }}>
+        {[0,1,2,3,4,5].map(i => (
+          <div key={i} style={{
+            position: "absolute", left: `${-10 + i * 22}%`, top: "-100%",
+            width: 1, height: "300%",
+            background: "rgba(255,255,255,0.025)",
+            transform: "rotate(15deg)",
+          }} />
+        ))}
+      </AbsoluteFill>
+
+      <AbsoluteFill style={{
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        padding: "0 48px", gap: 28,
+      }}>
+
         {/* Title */}
-        <div
-          style={{
-            transform: `translateY(${titleY}px)`,
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              fontFamily,
-              fontSize: 68,
-              fontWeight: 900,
-              color: WHITE,
-              letterSpacing: "-0.045em",
-              lineHeight: 1.0,
-            }}
-          >
-            Màrqueting que es nota
+        <div style={{ transform: `translateY(${tY}px) scale(${tSc})`, textAlign: "center" }}>
+          <div style={{ fontFamily, fontSize: 28, fontWeight: 700, color: RED, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 6 }}>
+            La solució
           </div>
-          <div
-            style={{
-              fontFamily,
-              fontSize: 68,
-              fontWeight: 900,
-              color: RED,
-              letterSpacing: "-0.045em",
-              lineHeight: 1.0,
-            }}
-          >
-            al carrer.
+          <div style={{ fontFamily, fontSize: 74, fontWeight: 900, color: WHITE, letterSpacing: "-0.05em", lineHeight: 0.95 }}>
+            Màrqueting que es
+          </div>
+          <div style={{ fontFamily, fontSize: 74, fontWeight: 900, color: RED, letterSpacing: "-0.05em", lineHeight: 0.95 }}>
+            nota al carrer.
           </div>
         </div>
 
-        {/* 3 Solution blocks */}
-        <div style={{ display: "flex", gap: 20, width: "100%", alignItems: "stretch" }}>
-          {BLOCKS.map((b, i) => (
-            <SolutionBlock
-              key={i}
-              icon={b.icon}
-              title={b.title}
-              body={b.body}
-              dir={b.dir}
-              startF={b.start}
-              f={f}
-              fps={fps}
-              index={i}
-            />
-          ))}
+        {/* 3 blocks */}
+        <div style={{ display: "flex", gap: 14, width: "100%", alignItems: "stretch" }}>
+          {BLOCKS.map((b, i) => {
+            const sp = spring({ frame: f - b.start, fps, config: SPRING, durationInFrames: 52 });
+            const op = interpolate(f, [b.start, b.start + 16], [0, 1], cl);
+
+            const tx = b.dir === "left"  ? interpolate(sp, [0, 1], [-220, 0])
+                     : b.dir === "right" ? interpolate(sp, [0, 1], [220,  0]) : 0;
+            const ty = b.dir === "top"   ? interpolate(sp, [0, 1], [-180, 0]) : 0;
+            const sc = interpolate(sp, [0, 0.8, 1], [0.85, 1.05, 1]);
+
+            // Arrival particles
+            const burstOp = interpolate(f, [b.start + 10, b.start + 14, b.start + 28], [0, 1, 0], cl);
+            const burstP  = interpolate(f, [b.start + 10, b.start + 28], [0, 1], cl);
+
+            // Idle float
+            const floatY = Math.sin((f - b.start) * 0.036 + i * 2.2) * 5;
+
+            return (
+              <div key={i} style={{
+                flex: 1, position: "relative",
+                opacity: op,
+                transform: `translate(${tx}px, ${ty + floatY}px) scale(${sc})`,
+              }}>
+                {/* Arrival burst */}
+                {burstOp > 0 && BLOCK_DOTS.map((dot, di) => (
+                  <div key={di} style={{
+                    position: "absolute", left: "50%", top: "50%",
+                    width: 5, height: 5, borderRadius: "50%",
+                    background: b.bg === RED ? WHITE : RED,
+                    transform: `translate(${Math.cos(dot.angle) * dot.r * burstP - 2.5}px, ${Math.sin(dot.angle) * dot.r * burstP - 2.5}px)`,
+                    opacity: burstOp,
+                    pointerEvents: "none",
+                  }} />
+                ))}
+
+                <div style={{
+                  background: b.bg,
+                  border: b.bg === BLACK ? `2px solid ${RED}` : "none",
+                  borderRadius: 8,
+                  padding: "26px 20px",
+                  height: "100%",
+                  boxSizing: "border-box",
+                  boxShadow: b.bg === BLACK ? `0 0 28px ${RED}44` : b.bg === RED ? `0 0 28px ${RED}88` : "0 6px 32px rgba(0,0,0,0.5)",
+                  display: "flex", flexDirection: "column", gap: 12,
+                }}>
+                  <div style={{ fontSize: 44 }}>{b.icon}</div>
+                  <div style={{
+                    fontFamily, fontSize: 26, fontWeight: 900,
+                    color: b.fg, letterSpacing: "-0.03em",
+                    lineHeight: 1.1, whiteSpace: "pre-line",
+                  }}>{b.title}</div>
+                  <div style={{ width: 32, height: 3, background: b.accent, borderRadius: 2 }} />
+                  <div style={{
+                    fontFamily, fontSize: 18, fontWeight: 500,
+                    color: b.bg === WHITE ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.6)",
+                    lineHeight: 1.4, whiteSpace: "pre-line",
+                  }}>{b.body}</div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </AbsoluteFill>
     </AbsoluteFill>

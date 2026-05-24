@@ -2,135 +2,106 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
 import { fontFamily, BLACK, WHITE, RED, SPRING_SOFT, cl } from "../brand";
 
-// ─── Scene 3: Quote Impact — 0-125f ─────────────────────────────────────────
-// Word by word reveal, large type. Then glow flash. Hard cut.
+// ─── Scene 3: Quote Impact — AGGRESSIVE ─────────────────────────────────────
+// Words animate in alternating WHITE/RED. Background pulses.
+// Ends with a hard white flash → cut.
 
-const LINE1_WORDS = ["La gent va a llocs"];
-const LINE2_WORDS = ["per experiències i pertinença"];
-const LINE3_WORDS = ["— no per un Reel ben editat."];
+// Words with color assignment
+const LINE1: { w: string; c: string }[] = [
+  { w: "La gent", c: WHITE },
+  { w: "va a llocs", c: RED },
+  { w: "per experiències", c: WHITE },
+  { w: "i pertinença", c: RED },
+];
+const LINE2: { w: string; c: string }[] = [
+  { w: "—", c: RED },
+  { w: "no per un", c: WHITE },
+  { w: "Reel", c: RED },
+  { w: "ben editat.", c: "rgba(255,255,255,0.55)" },
+];
 
 const WordReveal: React.FC<{
-  words: string[];
+  words: { w: string; c: string }[];
   startF: number;
   f: number;
   fps: number;
   size?: number;
-  color?: string;
-  spacing?: number;
-}> = ({ words, startF, f, fps, size = 58, color = WHITE, spacing = 10 }) => {
-  return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: `0 ${spacing}px`, justifyContent: "center" }}>
-      {words.map((word, i) => {
-        const t0 = startF + i * 12;
-        const sp = spring({ frame: f - t0, fps, config: SPRING_SOFT, durationInFrames: 35 });
-        const y = interpolate(sp, [0, 1], [30, 0]);
-        const op = interpolate(f, [t0, t0 + 12], [0, 1], cl);
+}> = ({ words, startF, f, fps, size = 70 }) => (
+  <div style={{ display: "flex", flexWrap: "wrap", gap: "0 14px", justifyContent: "center" }}>
+    {words.map(({ w, c }, i) => {
+      const t0 = startF + i * 10;
+      const sp = spring({ frame: f - t0, fps, config: SPRING_SOFT, durationInFrames: 32 });
+      const y  = interpolate(sp, [0, 1], [40, 0]);
+      const sc = interpolate(sp, [0, 0.7, 1], [0.6, 1.1, 1]);
+      const op = interpolate(f, [t0, t0 + 10], [0, 1], cl);
 
-        return (
-          <span
-            key={i}
-            style={{
-              fontFamily,
-              fontSize: size,
-              fontWeight: 900,
-              color,
-              letterSpacing: "-0.04em",
-              lineHeight: 1.1,
-              display: "inline-block",
-              transform: `translateY(${y}px)`,
-              opacity: op,
-            }}
-          >
-            {word}&nbsp;
-          </span>
-        );
-      })}
-    </div>
-  );
-};
+      return (
+        <span key={i} style={{
+          fontFamily, fontSize: size, fontWeight: 900,
+          color: c, letterSpacing: "-0.045em", lineHeight: 1.05,
+          display: "inline-block",
+          transform: `translateY(${y}px) scale(${sc})`,
+          opacity: op,
+        }}>
+          {w}
+        </span>
+      );
+    })}
+  </div>
+);
 
 export const S3Quote: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Glow: flashes briefly at f88
-  const glow = interpolate(f, [85, 90, 95, 102], [0, 1, 0.6, 0], cl);
+  // Pulsing red background glow mid-way
+  const bgGlow = interpolate(f, [35, 55, 75], [0, 0.18, 0], cl);
 
-  // Hard cut: everything visible until very last frame
-  const opacity = interpolate(f, [120, 125], [1, 0], cl);
+  // Hard WHITE flash at the end
+  const flashOut = interpolate(f, [112, 116, 120, 125], [0, 1, 0.5, 1], cl);
+
+  const opacity = interpolate(f, [0, 14], [0, 1], cl);
 
   return (
-    <AbsoluteFill
-      style={{
-        background: BLACK,
-        opacity,
-      }}
-    >
-      {/* Glow layer */}
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(ellipse at 50% 50%, rgba(232,64,28,${glow * 0.2}) 0%, transparent 65%)`,
-          pointerEvents: "none",
-        }}
-      />
+    <AbsoluteFill style={{ background: BLACK, opacity }}>
 
-      <AbsoluteFill
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "0 80px",
-          gap: 12,
-        }}
-      >
-        {/* Opening quote mark */}
-        <div
-          style={{
-            fontFamily,
-            fontSize: 80,
-            fontWeight: 900,
-            color: RED,
-            lineHeight: 1,
-            opacity: interpolate(f, [5, 20], [0, 1], cl),
-            alignSelf: "flex-start",
-            marginBottom: -12,
-          }}
-        >
+      {/* Red glow background */}
+      <AbsoluteFill style={{
+        background: `radial-gradient(ellipse at 50% 50%, rgba(232,64,28,${bgGlow}) 0%, transparent 70%)`,
+        pointerEvents: "none",
+      }} />
+
+      {/* Hard cut flash */}
+      <AbsoluteFill style={{ background: WHITE, opacity: flashOut, pointerEvents: "none" }} />
+
+      <AbsoluteFill style={{
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        padding: "0 72px", gap: 16,
+      }}>
+
+        {/* Opening quote — huge red */}
+        <div style={{
+          fontFamily, fontSize: 100, fontWeight: 900, color: RED,
+          lineHeight: 1, alignSelf: "flex-start", marginBottom: -18,
+          opacity: interpolate(f, [4, 16], [0, 1], cl),
+          transform: `scale(${interpolate(f, [4, 18], [0.5, 1], cl)})`,
+          transformOrigin: "left center",
+        }}>
           "
         </div>
 
-        <WordReveal words={LINE1_WORDS} startF={8} f={f} fps={fps} size={62} />
-        <WordReveal words={LINE2_WORDS} startF={24} f={f} fps={fps} size={62} />
+        <WordReveal words={LINE1} startF={8}  f={f} fps={fps} size={68} />
 
-        {/* Divider */}
-        <div
-          style={{
-            width: interpolate(f, [50, 72], [0, 200], cl),
-            height: 3,
-            background: RED,
-            borderRadius: 2,
-            margin: "8px 0",
-          }}
-        />
+        {/* Red separator line */}
+        <div style={{
+          width: interpolate(f, [52, 72], [0, 260], cl),
+          height: 4, background: RED, borderRadius: 2,
+        }} />
 
-        <WordReveal
-          words={LINE3_WORDS}
-          startF={56}
-          f={f}
-          fps={fps}
-          size={52}
-          color="rgba(255,255,255,0.65)"
-        />
+        <WordReveal words={LINE2} startF={58} f={f} fps={fps} size={58} />
+
       </AbsoluteFill>
-
-      {/* Scan lines */}
-      <AbsoluteFill
-        style={{
-          background: "repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 4px)",
-          pointerEvents: "none",
-        }}
-      />
     </AbsoluteFill>
   );
 };

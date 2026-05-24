@@ -2,179 +2,129 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, spring, interpolate } from "remotion";
 import { fontFamily, BLACK, WHITE, RED, SPRING, SPRING_SNAP, cl } from "../brand";
 
-// ─── Scene 5: Activations — 0-370f ──────────────────────────────────────────
-// Title spins in on Y. 4 cards flip in (3D rotateY). Each card has tags.
+// ─── Scene 5: Activations — ALTERNATING COLOR CARDS ─────────────────────────
+// Cards alternate: dark → RED bg → WHITE bg → dark
+// Each card flips differently. Tags animate as colored pills.
 
 const CARDS = [
-  {
-    title: "COMUNITAT QUE TORNA SOLA",
-    tags: ["Comunitat", "Fidelització", "Recurrència"],
-  },
-  {
-    title: "EL PUNT DE TROBADA DEL BARRI",
-    tags: ["Barri", "Moment", "Flux"],
-  },
-  {
-    title: "IDENTITAT PRÒPIA",
-    tags: ["Col·laboració", "Exclusivitat", "Diferenciació"],
-  },
-  {
-    title: "UN LOCAL QUE ES CONVERTEIX EN DESTÍ",
-    tags: ["Experiència", "Cultura", "Pertinença"],
-  },
-];
-
-const ActivationCard: React.FC<{
-  title: string;
-  tags: string[];
-  startF: number;
-  f: number;
-  fps: number;
-  index: number;
-}> = ({ title, tags, startF, f, fps, index }) => {
-  // Card flip: rotateY 90→0
-  const flipSp = spring({ frame: f - startF, fps, config: SPRING, durationInFrames: 50 });
-  const rotY = interpolate(flipSp, [0, 1], [90, 0]);
-  const opacity = interpolate(f, [startF, startF + 14], [0, 1], cl);
-
-  // Idle micro-rotation
-  const idleRot = Math.sin((f - startF) * 0.03 + index * 1.8) * 0.6;
-
-  return (
-    <div
-      style={{
-        perspective: "900px",
-        opacity,
-      }}
-    >
-      <div
-        style={{
-          transform: `perspective(900px) rotateY(${rotY}deg) rotate(${idleRot}deg)`,
-          transformOrigin: "left center",
-          background: "#080808",
-          border: "1px solid rgba(255,255,255,0.07)",
-          borderBottom: `4px solid ${RED}`,
-          borderRadius: 8,
-          padding: "22px 24px",
-        }}
-      >
-        {/* Number */}
-        <div
-          style={{
-            fontFamily,
-            fontSize: 13,
-            fontWeight: 900,
-            color: RED,
-            letterSpacing: "0.2em",
-            marginBottom: 10,
-          }}
-        >
-          {String(index + 1).padStart(2, "0")}
-        </div>
-
-        {/* Title */}
-        <div
-          style={{
-            fontFamily,
-            fontSize: 28,
-            fontWeight: 900,
-            color: WHITE,
-            letterSpacing: "-0.035em",
-            lineHeight: 1.15,
-            marginBottom: 18,
-          }}
-        >
-          {title}
-        </div>
-
-        {/* Tags */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {tags.map((tag, ti) => {
-            const tagStart = startF + 30 + ti * 8;
-            const tagOp = interpolate(f, [tagStart, tagStart + 14], [0, 1], cl);
-            const tagX = interpolate(f, [tagStart, tagStart + 18], [-20, 0], cl);
-            return (
-              <span
-                key={ti}
-                style={{
-                  fontFamily,
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: "rgba(255,255,255,0.7)",
-                  background: "rgba(232,64,28,0.12)",
-                  border: "1px solid rgba(232,64,28,0.3)",
-                  borderRadius: 100,
-                  padding: "5px 14px",
-                  opacity: tagOp,
-                  transform: `translateX(${tagX}px)`,
-                  display: "inline-block",
-                }}
-              >
-                {tag}
-              </span>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-};
+  { title: "COMUNITAT\nQUE TORNA SOLA",         tags: ["Comunitat", "Fidelització", "Recurrència"], bg: "#111111", fg: WHITE,  accent: RED,   flipDir: "Y" as const },
+  { title: "EL PUNT DE\nTROBADA DEL BARRI",      tags: ["Barri", "Moment", "Flux"],                  bg: RED,      fg: WHITE,  accent: WHITE, flipDir: "X" as const },
+  { title: "IDENTITAT\nPRÒPIA",                  tags: ["Col·lab.", "Exclusivitat", "Diferenciació"], bg: WHITE,    fg: BLACK,  accent: RED,   flipDir: "Y" as const },
+  { title: "UN LOCAL QUE ES\nCONVERTEIX EN DESTÍ",tags: ["Experiència","Cultura","Pertinença"],       bg: RED,      fg: WHITE,  accent: WHITE, flipDir: "X" as const },
+] as const;
 
 export const S5Activations: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const fadeIn  = interpolate(f, [0, 16], [0, 1], cl);
+  const fadeIn  = interpolate(f, [0, 14], [0, 1], cl);
   const fadeOut = interpolate(f, [348, 370], [1, 0], cl);
-  const opacity = Math.min(fadeIn, fadeOut);
 
-  // Title: spins in on Y axis
-  const titleSp = spring({ frame: f - 5, fps, config: SPRING_SNAP, durationInFrames: 45 });
-  const titleRotY = interpolate(titleSp, [0, 1], [-90, 0]);
-  const titleOp = interpolate(f, [5, 25], [0, 1], cl);
+  // Title Y-spin
+  const tSp = spring({ frame: f - 4, fps, config: SPRING_SNAP, durationInFrames: 42 });
+  const tRotY = interpolate(tSp, [0, 1], [-90, 0]);
+  const tOp   = interpolate(f, [4, 22], [0, 1], cl);
 
-  const cardStarts = [48, 108, 168, 228];
+  const starts = [46, 106, 166, 226];
 
   return (
-    <AbsoluteFill style={{ background: BLACK, opacity }}>
-      <AbsoluteFill
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "0 60px",
-          gap: 24,
-        }}
-      >
+    <AbsoluteFill style={{ background: "#0A0A0A", opacity: Math.min(fadeIn, fadeOut), overflow: "hidden" }}>
+
+      {/* Dot grid background */}
+      <AbsoluteFill style={{
+        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)",
+        backgroundSize: "32px 32px",
+        pointerEvents: "none",
+      }} />
+
+      <AbsoluteFill style={{
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        padding: "0 52px", gap: 20,
+      }}>
+
         {/* Title */}
-        <div
-          style={{
-            opacity: titleOp,
-            transform: `perspective(1200px) rotateY(${titleRotY}deg)`,
-            textAlign: "center",
-            marginBottom: 8,
-          }}
-        >
-          <div style={{ fontFamily, fontSize: 22, fontWeight: 700, color: RED, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 8 }}>
+        <div style={{
+          opacity: tOp,
+          transform: `perspective(1000px) rotateY(${tRotY}deg)`,
+          textAlign: "center", marginBottom: 4,
+        }}>
+          <div style={{ fontFamily, fontSize: 24, fontWeight: 800, color: RED, letterSpacing: "0.18em", textTransform: "uppercase" }}>
             Coses que fem. De veritat.
           </div>
-          <div style={{ width: 80, height: 3, background: RED, borderRadius: 2, margin: "0 auto" }} />
+          <div style={{ width: 60, height: 4, background: RED, borderRadius: 2, margin: "10px auto 0" }} />
         </div>
 
-        {/* Cards grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, width: "100%" }}>
-          {CARDS.map((card, i) => (
-            <ActivationCard
-              key={i}
-              title={card.title}
-              tags={card.tags}
-              startF={cardStarts[i]}
-              f={f}
-              fps={fps}
-              index={i}
-            />
-          ))}
+        {/* Cards — 2×2 */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, width: "100%" }}>
+          {CARDS.map((card, i) => {
+            const sp   = spring({ frame: f - starts[i], fps, config: SPRING, durationInFrames: 52 });
+            const op   = interpolate(f, [starts[i], starts[i] + 16], [0, 1], cl);
+            const rot  = card.flipDir === "Y"
+              ? `perspective(900px) rotateY(${interpolate(sp, [0, 1], [90, 0])}deg)`
+              : `perspective(900px) rotateX(${interpolate(sp, [0, 1], [-90, 0])}deg)`;
+
+            const sc = interpolate(sp, [0, 0.8, 1], [0.88, 1.06, 1]);
+
+            // Idle micro-motion
+            const floatY = Math.sin((f - starts[i]) * 0.032 + i * 1.6) * 4;
+
+            return (
+              <div key={i} style={{
+                opacity: op,
+                transform: `${rot} scale(${sc}) translateY(${floatY}px)`,
+                transformOrigin: "center center",
+                background: card.bg,
+                border: card.bg === "#111111" ? `1px solid rgba(255,255,255,0.08)` : "none",
+                borderBottom: `5px solid ${card.accent}`,
+                borderRadius: 8,
+                padding: "20px 18px",
+                boxShadow: card.bg === RED ? `0 0 30px ${RED}77` : card.bg === WHITE ? "0 6px 28px rgba(0,0,0,0.4)" : "none",
+              }}>
+                {/* Number */}
+                <div style={{
+                  fontFamily, fontSize: 10, fontWeight: 900,
+                  color: card.bg === WHITE ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.4)",
+                  letterSpacing: "0.22em", marginBottom: 8,
+                }}>
+                  0{i + 1} —
+                </div>
+
+                {/* Title */}
+                <div style={{
+                  fontFamily, fontSize: 26, fontWeight: 900,
+                  color: card.fg, letterSpacing: "-0.04em",
+                  lineHeight: 1.1, marginBottom: 14,
+                  whiteSpace: "pre-line",
+                }}>
+                  {card.title}
+                </div>
+
+                {/* Tags */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {card.tags.map((tag, ti) => {
+                    const tagStart = starts[i] + 28 + ti * 8;
+                    return (
+                      <span key={ti} style={{
+                        fontFamily, fontSize: 12, fontWeight: 800,
+                        color: card.bg === WHITE ? RED : card.accent,
+                        background: card.bg === WHITE
+                          ? "rgba(232,64,28,0.1)"
+                          : "rgba(255,255,255,0.12)",
+                        border: `1px solid ${card.bg === WHITE ? RED : card.accent}55`,
+                        borderRadius: 100, padding: "4px 12px",
+                        opacity: interpolate(f, [tagStart, tagStart + 12], [0, 1], cl),
+                        transform: `translateX(${interpolate(f, [tagStart, tagStart + 14], [-16, 0], cl)}px)`,
+                        display: "inline-block",
+                      }}>
+                        {tag}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </AbsoluteFill>
     </AbsoluteFill>
